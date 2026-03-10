@@ -16,7 +16,7 @@
 4. [Structure Relaxation: What It Means and Why It Matters](#4-structure-relaxation-what-it-means-and-why-it-matters)
 5. [MACE: The Machine-Learning Interatomic Potential](#5-mace-the-machine-learning-interatomic-potential)
 6. [Materials Project: The Reference Database](#6-materials-project-the-reference-database)
-7. [The Validity Ladder: Trusted Outputs vs. Estimates vs. Proxies](#7-the-validity-ladder-trusted-outputs-vs-estimates-vs-proxies)
+7. [The Validity Ladder: Level A Outputs vs. Estimates vs. Proxies](#7-the-validity-ladder-level-a-outputs-vs-estimates-vs-proxies)
 8. [Common Scientific Pitfalls for Engineers](#8-common-scientific-pitfalls-for-engineers)
 9. [Glossary](#9-glossary)
 
@@ -24,18 +24,18 @@
 
 ## 1. What CathodeScope Is and Is Not
 
-CathodeScope is a reproducible scientific workflow platform for benchmarked Li-ion cathode screening, with agent orchestration layered on top of deterministic, validated workflows. The thesis-core does **not** claim full autonomous materials discovery. Understanding the boundary between what the system does and what it does not do is essential for every contributor.
+CathodeScope is a reproducible scientific workflow platform for benchmarked Li-ion cathode screening, with agent orchestration layered on top of deterministic, benchmarked workflows. The thesis-core does **not** claim full autonomous materials discovery. Understanding the boundary between what the system does and what it does not do is essential for every contributor.
 
 | CathodeScope **IS** | CathodeScope **IS NOT** |
 |---|---|
 | A reproducible scientific workflow platform for benchmarked cathode screening | An autonomous materials discovery engine |
-| A system that compares computed structures against trusted reference data | A replacement for DFT or experimental validation |
+| A system that compares computed structures against established computational reference data | A replacement for DFT or experimental validation |
 | Extensible toward agent orchestration and advanced workflows | Making claims about unknown or hypothetical materials in its thesis-core |
 
 **Key implications for engineers:**
 
-- Every workflow output must trace back to a reference or a validated computational step. If a result cannot be compared to a trusted source, it is not a thesis-core claim.
-- Agent orchestration is a layer that coordinates validated workflows. The agents do not invent new science; they sequence and parameterize deterministic steps.
+- Every workflow output must trace back to a reference or a benchmarked computational step. If a result cannot be compared to an established reference source, it is not a thesis-core claim.
+- Agent orchestration is a layer that coordinates benchmarked workflows. The agents do not invent new science; they sequence and parameterize deterministic steps.
 - When in doubt about whether a feature crosses the boundary from "benchmarked screening" into "discovery claim," raise it. The validity ladder (Section 7) is the arbiter.
 
 > **Cross-references:** `docs/architecture.md` (system design and workflow layering), `docs/master_plan.md` (phased roadmap and scope boundaries).
@@ -301,7 +301,7 @@ These are not edge cases — they are fundamental characteristics that affect ev
 
 3. **Extrapolation risk.** MACE has never "seen" structures that differ significantly from its training distribution. Predictions for truly novel compositions or extreme conditions (very high pressure, exotic coordination environments) are extrapolations and must be treated with skepticism.
 
-4. **Not ground truth.** MACE outputs should always be validated against reference data. A MACE-relaxed structure is a prediction, not a measurement. The comparison to the MP reference is what gives the result scientific meaning.
+4. **Not ground truth.** MACE outputs should always be compared against reference data. A MACE-relaxed structure is a prediction, not a measurement. The comparison to the MP reference is what gives the result scientific meaning.
 
 5. **Model versioning matters.** Different MACE checkpoints can give different results. CathodeScope must pin the exact model version and record it as provenance metadata.
 
@@ -348,16 +348,16 @@ All MP structures are computed with a consistent DFT methodology:
 
 This consistency is what makes MP useful as a reference: all structures are computed the same way, so comparisons between materials are internally consistent even if absolute values carry systematic errors.
 
-### Why "trusted" in the validity ladder
+### Why MP qualifies as a Level A reference source
 
-MP is trusted in CathodeScope's validity framework (Level A) because it provides:
+MP qualifies as a Level A reference in CathodeScope's validity framework because it provides:
 
 - **Consistent methodology** — every structure computed the same way
 - **Well-documented provenance** — methodology, software versions, and parameters are published
-- **Community validation** — widely used and scrutinized by the materials science community
+- **Community scrutiny** — widely used and reviewed by the materials science community
 - **Standardized identifiers** — each material has a unique mp-id for unambiguous reference
 
-"Trusted" means "trusted as a reference for comparison," not "experimentally verified truth."
+"Level A reference" means "established computational reference suitable for benchmark comparison," not "experimentally verified truth."
 
 ### Limitations
 
@@ -373,7 +373,7 @@ MP is trusted in CathodeScope's validity framework (Level A) because it provides
 
 ---
 
-## 7. The Validity Ladder: Trusted Outputs vs. Estimates vs. Proxies
+## 7. The Validity Ladder: Level A Outputs vs. Estimates vs. Proxies
 
 The validity ladder is CathodeScope's framework for classifying every output by its scientific trustworthiness. It exists to prevent overclaiming — the single most dangerous failure mode for a thesis built on computational predictions.
 
@@ -381,9 +381,9 @@ Every output CathodeScope produces must be labeled with its validity level. No o
 
 ---
 
-### Level A — Trusted (MVP outputs)
+### Level A — Benchmarked (MVP outputs)
 
-**What qualifies:** Retrieved or computed by validated MVP workflows with full provenance.
+**What qualifies:** Retrieved or computed by benchmarked MVP workflows with full provenance.
 
 | Sub-category | Examples | Allowed Wording |
 |---|---|---|
@@ -405,7 +405,7 @@ Every output CathodeScope produces must be labeled with its validity level. No o
 
 ### Level B — Restricted Estimates
 
-**What qualifies:** Outputs computed by validated workflows in a narrow, well-defined scope. Allowed in later phases, not in the MVP thesis-core.
+**What qualifies:** Outputs computed by benchmarked workflows in a narrow, well-defined scope. Allowed in later phases, not in the MVP thesis-core.
 
 | Output Type | Scope Restriction |
 |---|---|
@@ -428,13 +428,13 @@ Every output CathodeScope produces must be labeled with its validity level. No o
 
 ### Level C — Proxies
 
-**What qualifies:** Screening signals computed by lightweight methods. Planned from the beginning as part of the roadmap, but never claimed as thesis-core trusted outputs.
+**What qualifies:** Screening signals computed by lightweight methods. Planned from the beginning as part of the roadmap, but never claimed as thesis-core Level A outputs.
 
 | Proxy | Method | What It Signals |
 |---|---|---|
 | Stability proxy | Energy above hull comparison using MP data | Thermodynamic plausibility (not proof of stability) |
 | Dynamical stability proxy | Gamma-point phonon check | Absence of obvious dynamical instability (not proof of stability) |
-| Transport proxy | Lightweight migration barrier estimate (e.g., NEB or nudged-elastic-band-lite) | Whether Li mobility is plausible (not a validated barrier) |
+| Transport proxy | Lightweight migration barrier estimate (e.g., NEB or nudged-elastic-band-lite) | Whether Li mobility is plausible (not a benchmark-compared barrier) |
 
 **Allowed wording:** "proxy," "screening signal," "follow-up recommended."
 
@@ -570,7 +570,7 @@ Alphabetically ordered. Each definition is scoped to CathodeScope's context.
 
 **Materials Project** — An open database of computed materials properties maintained by Lawrence Berkeley National Laboratory. CathodeScope's primary source of reference crystal structures and metadata. See Section 6.
 
-**Migration barrier** — The energy barrier a lithium ion must overcome to hop between adjacent sites in a crystal. Determines ionic conductivity. A Level C proxy in CathodeScope, not a trusted output.
+**Migration barrier** — The energy barrier a lithium ion must overcome to hop between adjacent sites in a crystal. Determines ionic conductivity. A Level C proxy in CathodeScope, not a Level A output.
 
 **mp-id** — A unique identifier assigned to each material in the Materials Project database, in the format `mp-XXXXX` (e.g., mp-22526 for LiCoO2). Used in CathodeScope for provenance tracking.
 

@@ -230,6 +230,7 @@ ProvenanceRecord:
   random_seeds: object | null      # Random seeds used for reproducibility (e.g., {'numpy': 42, 'torch': 42}), null if deterministic by default
   compute_device: string | null    # Compute device used (e.g., 'cpu', 'cuda:0', 'mps'), null if step did not involve ML computation
   platform: string                 # platform identifier, e.g., "Darwin-arm64" or "Linux-x86_64"
+  git_commit: string | null        # Git commit hash at runtime for reproducibility (null if not in a git repo or dirty working tree)
   notes: string | null             # optional human-readable note
 ```
 
@@ -269,17 +270,28 @@ BenchmarkRow:
 {
   "input_resolution": true,
   "structure_retrieval": true,
-  "normalization": true,
+  "structure_normalization": true,
+  "space_group_input": "R-3m",
   "relaxation_convergence": true,
   "relaxation_steps": 23,
+  "final_fmax": 0.005,
+  "final_energy": -42.156,
   "lattice_param_deviation_a_pct": 0.53,
+  "lattice_param_deviation_b_pct": 0.53,
   "lattice_param_deviation_c_pct": 0.22,
   "volume_deviation_pct": 1.28,
+  "angle_deviation_alpha": 0.0,
+  "angle_deviation_beta": 0.0,
+  "angle_deviation_gamma": 0.0,
   "symmetry_preserved": true,
-  "bond_length_sanity": true,
+  "space_group_output": "R-3m",
+  "symprec_used": 0.1,
+  "min_bond_length": 1.92,
+  "max_bond_length": 2.11,
   "evidence_labeling_complete": true,
   "report_generated": true,
-  "runtime_seconds": 12.3
+  "runtime_seconds": 12.3,
+  "workflow_version": "1.0.0"
 }
 ```
 
@@ -449,7 +461,7 @@ Every schema carries a `schema_version` field following semantic versioning (MAJ
 
 ## 7. What Must Be Stored (Completeness Checklist)
 
-For every workflow run, the following must be persisted. Nothing is optional. Missing artifacts indicate a bug in the pipeline, not a design choice. For workflows that terminated with `hard_failure`, the integrity check validates artifacts up to the last completed step only. Missing artifacts after the failure point are expected and do not indicate a pipeline bug.
+For every workflow run, the following must be persisted. Nothing is optional. Missing artifacts indicate a bug in the pipeline, not a design choice. For workflows that did not complete all steps (any status other than `success` or `partial_success`), the integrity check validates artifacts up to the last completed step only. Missing artifacts after the failure point are expected and do not indicate a pipeline bug.
 
 - [ ] **Raw input** -- formula, MP ID, or structure file as provided by the user
 - [ ] **Canonical material record** -- `CanonicalMaterial` JSON with resolved structure and metadata
@@ -462,7 +474,7 @@ For every workflow run, the following must be persisted. Nothing is optional. Mi
 - [ ] **Benchmark row** -- `BenchmarkRow` JSON, if the run is part of a benchmark execution
 - [ ] **All warnings and errors** -- captured in `StepResult.warnings`, `StepResult.error`, and `WorkflowResult.status`
 
-**Verification:** A post-run integrity check should confirm that every item in this checklist has a corresponding file on disk. If any file is missing, the workflow status must be downgraded to `hard_failure` and the missing artifact must be logged as an `ArtifactError`.
+**Verification:** A post-run integrity check should confirm that every item in this checklist — up to and including the last completed workflow step — has a corresponding file on disk. Artifacts for steps that never executed (i.e., steps after a failure point) are not expected and their absence does not constitute an integrity failure. If any artifact that should exist (given the steps that completed) is missing, the workflow status must be downgraded to `hard_failure` and the missing artifact must be logged as an `ArtifactError`.
 
 Cross-reference: `architecture.md` Artifact/Provenance Store component.
 

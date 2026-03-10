@@ -293,16 +293,17 @@ test_create_provenance_helper_function()
 test_provenance_record_mace_checkpoint_hash_is_optional()
 test_provenance_record_mp_database_version_is_optional()
 test_provenance_record_platform_is_string()
+test_provenance_record_git_commit_is_optional()
 ```
 
 **Implementation notes**:
-- Fields per `artifact_schema.md` Section 2.5 (12 original + 3 new = 16 total): `schema_version`, `created_at`, `created_by`, `cathodescope_version`, `python_version`, `dependencies`, `config_snapshot`, `input_hash`, `parent_ids`, `mace_checkpoint_hash` (string | null), `mp_database_version` (string | null), `platform` (string), `mace_model_name` (string | null), `random_seeds` (object | null), `compute_device` (string | null), `notes` (string | null).
+- Fields per `artifact_schema.md` Section 2.5 (12 original + 4 new = 17 total): `schema_version`, `created_at`, `created_by`, `cathodescope_version`, `python_version`, `dependencies`, `config_snapshot`, `input_hash`, `parent_ids`, `mace_checkpoint_hash` (string | null), `mp_database_version` (string | null), `platform` (string), `mace_model_name` (string | null), `random_seeds` (object | null), `compute_device` (string | null), `git_commit` (string | null), `notes` (string | null).
 - `created_by` uses `Literal["cathodescope", "user", "agent"]`.
 - `schema_version` defaults to `"1.0.0"`.
 - Include a `create_provenance()` factory function that auto-populates `cathodescope_version`, `python_version`, `created_at`, and `dependencies` from the runtime environment.
 
 **Acceptance criteria**:
-- All 14 tests pass.
+- All 15 tests pass.
 - `ProvenanceRecord.model_dump()` produces valid JSON.
 - `ProvenanceRecord.model_validate(json_data)` round-trips correctly.
 - `create_provenance()` returns a fully-populated record without any arguments.
@@ -462,7 +463,7 @@ test_benchmark_summary_serializes_to_json()
 **Implementation notes**:
 - `ReportSection` per `artifact_schema.md` Section 2.4: `heading`, `content_markdown`, `data`, `evidence_labels`.
 - `ReportRecord` per `artifact_schema.md` Section 2.4: `schema_version`, `report_id`, `material_id`, `workflow_result_id`, `report_type`, `title`, `sections`, `evidence_summary`, `warnings`, `generated_at`, `provenance`, `raw_user_input` (string — stores the original user input).
-- `BenchmarkRow` per `artifact_schema.md` Section 2.6.
+- `BenchmarkRow` per `artifact_schema.md` Section 2.6. The `metrics` object must support all 24 metrics defined in `benchmark_spec.md` Section 4 (see `artifact_schema.md` Section 2.6 example for the full field list).
 - `BenchmarkSummary` per `artifact_schema.md` Section 2.7. Add a `model_validator` that checks `materials_count == sum(status_counts.values()) == len(rows)`.
 
 **Acceptance criteria**:
@@ -585,7 +586,7 @@ test_store_cache_overwrite_is_allowed(tmp_path)
 - Set file permissions to read-only after write (`os.chmod(path, 0o444)`).
 - Cache directory is the exception: overwrites are allowed.
 - JSON serialization uses `json.dumps(data, indent=2)`.
-- Integrity check: given a `workflow_run_id`, verify all expected files exist per `artifact_schema.md` Section 7 checklist.
+- Integrity check: given a `workflow_run_id`, verify all expected files exist per `artifact_schema.md` Section 7 checklist. For workflows that did not complete all steps (any status other than `success` or `partial_success`), validate artifacts up to the last completed step only.
 
 **Acceptance criteria**:
 - All 17 tests pass.
@@ -1854,6 +1855,7 @@ This wave is intentionally empty for MVP. It tracks future work that must NOT be
 |---|---|---|---|
 | Unit — registry | 8 | `tests/unit/test_benchmark/test_registry.py` | Material sets, family classification |
 | Unit — runner | 13 | `tests/unit/test_benchmark/test_runner.py` | Processing, metrics, failure isolation |
+| Unit — comparator (T-24b) | 6 | `tests/unit/test_benchmark/test_comparator.py` | Status change detection, metric deltas, regression flagging |
 | Integration | 8 | `tests/integration/test_benchmark_suite.py` | Full 3-material benchmark with real MACE |
 | Reproducibility | 1 | `test_benchmark_reproducible_on_rerun()` | Rerun produces same result categories |
 | Scientific sanity | 1 | `test_benchmark_at_least_2_full_success()` | Phase 1 pass criterion met |
@@ -1868,11 +1870,11 @@ This wave is intentionally empty for MVP. It tracks future work that must NOT be
 
 | Category | Count |
 |---|---|
-| Unit tests | ~210 |
+| Unit tests | ~216 |
 | Integration tests | ~35 |
 | Regression tests | ~4 |
 | Architecture enforcement | ~10 |
-| **Total** | **~259** |
+| **Total** | **~265** |
 
 ---
 
@@ -1886,12 +1888,12 @@ This wave is intentionally empty for MVP. It tracks future work that must NOT be
 | 1 | Core models and config | T-01 – T-05 | 9–14 | All models serialize/deserialize, config loads correctly |
 | 2 | Scientific workflow core | T-06 – T-14 | 22–30 | All tools unit-tested, normalizer verified for 3 materials |
 | 3 | Reporting and provenance | T-15 – T-21 | 13–19 | Reports match validity matrix, LiCoO2 E2E passes, 3 materials tested |
-| 4 | Benchmark | T-22 – T-24 | 5–7 | 2/3 Full Success, benchmark reproducible |
+| 4 | Benchmark | T-22 – T-24b | 7–9 | 2/3 Full Success, benchmark reproducible, regression comparison operational |
 | 5 | Demo | T-25 | 2 | 3-minute CLI demo works |
 | 6 | Thesis-core hardening | T-26 – T-29 | 4–8 | CI passes, >80% coverage, import rules enforced, regression tests pass |
 | 7 | Agent layer | T-30 | 0.25 | Empty stubs with correct docstrings and boundaries |
 | 8 | Post-core extensions | — | — | Phase 5+ only; placeholder |
-| | **Total** | **31 tasks** | **56–82** | |
+| | **Total** | **32 tasks** | **58–84** | |
 
 ### Critical Path
 
@@ -1929,6 +1931,7 @@ T-00 ─┬─ T-01 ─┬─ T-02 ─┬─ T-06
       ├─ T-22 (needs T-03)
       ├─ T-23 (needs T-18, T-22, T-04, T-06)
       ├─ T-24 (needs T-21, T-23)
+      ├─ T-24b (needs T-23, T-04)
       ├─ T-25 (needs T-19, T-23)
       ├─ T-26 (needs T-00)
       ├─ T-27 (needs all previous)
@@ -2015,8 +2018,9 @@ T-00 ─┬─ T-01 ─┬─ T-02 ─┬─ T-06
 | T-22 | Benchmark registry | 1 |
 | T-23 | Benchmark runner | 3–4 |
 | T-24 | Benchmark runner integration test | 1–2 |
+| T-24b | Benchmark regression comparison tool | 2 |
 
-**Gate**: 2/3 Full Success. Benchmark reproducible on rerun. All metrics from `benchmark_spec.md` Section 4 populated. Scientific review checkpoint completed.
+**Gate**: 2/3 Full Success. Benchmark reproducible on rerun. All metrics from `benchmark_spec.md` Section 4 populated. Regression comparison tool operational (T-24b). Scientific review checkpoint completed.
 
 ---
 

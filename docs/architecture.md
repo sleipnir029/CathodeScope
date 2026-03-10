@@ -9,7 +9,7 @@
 
 ## 1. System Purpose and Scope
 
-CathodeScope is a reproducible scientific workflow platform for benchmarked Li-ion cathode screening, with agent orchestration layered on top of deterministic, validated workflows. The system analyzes known cathode materials, runs atomistic workflows, compares results against trusted references, and produces disciplined, evidence-labeled reports. The architectural north star: **the architecture supports the whole roadmap from day one, even though only part of it is implemented first.** Every component, interface boundary, and data contract documented here is designed so that future capabilities -- agent orchestration, voltage estimation, stability proxies, candidate generation -- plug into the existing structure through defined extension points, never by rewriting the core. The architecture is the contract between what exists today and what the system will become.
+CathodeScope is a reproducible scientific workflow platform for benchmarked Li-ion cathode screening, with agent orchestration layered on top of deterministic, benchmarked workflows. The system analyzes known cathode materials, runs atomistic workflows, compares results against known references, and produces disciplined, evidence-labeled reports. The architectural north star: **the architecture supports the whole roadmap from day one, even though only part of it is implemented first.** Every component, interface boundary, and data contract documented here is designed so that future capabilities -- agent orchestration, voltage estimation, stability proxies, candidate generation -- plug into the existing structure through defined extension points, never by rewriting the core. The architecture is the contract between what exists today and what the system will become.
 
 Cross-reference: `master_plan.md` for scope boundaries, phased roadmap, and the distinction between thesis-core claims and future extensions.
 
@@ -293,6 +293,17 @@ CanonicalMaterial:
 - Extended family classification (e.g., disordered rock salt, tavorite, NASICON)
 - Multi-polymorph handling (same formula, different structures)
 
+**Family classification rules:**
+
+```
+R-3m + LiMO2 composition → layered_oxide
+Pnma + LiMPO4 composition → olivine_polyanion
+Fd-3m + LiM2O4 composition → spinel
+otherwise → other
+```
+
+These rules are implemented in a `classify_family(space_group, formula)` function. The `other` category is a catch-all for materials outside the three benchmark families.
+
 **Extension points:** Family classification is implemented as a registry of classifier functions. Each classifier takes a pymatgen Structure and returns a family label or `None`. Adding a new family requires registering one classifier function. Workflow eligibility is similarly extensible: each new workflow registers its eligibility criteria.
 
 Cross-reference: `artifact_schema.md` Section 2.1 (CanonicalMaterial record).
@@ -332,7 +343,7 @@ WorkflowResult:
 - The engine passes the result context as a read-only typed container; tools cannot modify results from previous steps
 
 **State management:**
-- The engine maintains a `WorkflowContext` typed `@dataclass` (or pydantic model) that accumulates step results via its `step_results: dict[str, StepResult]` field
+- The engine maintains a `WorkflowContext` typed `@dataclass` that accumulates step results via its `step_results: dict[str, StepResult]` field
 - Each step function signature is `step(context: WorkflowContext, config: StepConfig) -> StepResult`
 - The engine appends each `StepResult` to the context before invoking the next step
 - If a step needs data from a previous step, it reads from the context by step name
@@ -375,8 +386,11 @@ WorkflowRegistry:
 
 **Formal `WorkflowContext` definition:**
 
+`WorkflowContext` is a typed `@dataclass` — not a free-form dictionary or mutable dict. Tools receive it as a read-only container; only the engine mutates `step_results`.
+
 ```
-WorkflowContext:
+@dataclass
+class WorkflowContext:  # read-only from tools; only engine appends to step_results
   material: CanonicalMaterial            # the material being processed
   normalized_query: NormalizedQuery      # the resolved input query
   step_results: dict[string, StepResult] # keyed by step_name, accumulated as steps complete
@@ -401,7 +415,9 @@ The `WorkflowContext` is a typed container — not a free-form dictionary. Each 
 
 A single step at a higher severity level overrides all lower-severity outcomes. For example, if five steps succeed and one triggers `soft_failure`, the overall status is `soft_failure`.
 
-Cross-reference: `artifact_schema.md` Section 2.2 (WorkflowResult and StepResult records).
+**Important distinction:** `WorkflowResult.status` reflects pipeline execution outcomes only (step completion, crashes, warnings). The `BenchmarkRow.status` field is determined independently by the benchmark runner applying the formal threshold table from `benchmark_spec.md` Section 5 to the recorded metrics. These two status values may differ — for example, a workflow may complete successfully (`WorkflowResult.status: success`) but produce lattice deviations exceeding 2%, resulting in `BenchmarkRow.status: partial_success`. The benchmark runner must call `classify_benchmark_status(metrics)` independently of the engine-assigned workflow status.
+
+Cross-reference: `artifact_schema.md` Section 2.2 (WorkflowResult and StepResult records), `benchmark_spec.md` Section 5 (benchmark classification).
 
 ---
 
@@ -776,13 +792,13 @@ These tools are NOT implemented in the MVP. Their interface contracts are define
 | **Family-specific** | Layered oxide: Li-layer spacing within expected range, no Li/TM site mixing detected. Spinel: tetrahedral 8a site occupancy correct. Olivine: 1D channel geometry preserved, PO4 tetrahedra intact | Family-dependent; defined in validation configuration |
 | **Comparison** | Lattice parameter deviation within threshold, volume deviation within threshold, space group preserved, bond lengths consistent with reference | Lattice params < 2%, volume < 5%, space group unchanged |
 
-**Evidence labeling:** Every validated output receives a label from the validity ladder. The labeling rules are deterministic:
+**Evidence labeling:** Every output passing through the validation layer receives a label from the validity ladder. The labeling rules are deterministic:
 
 | Output Type | Evidence Label | Condition |
 |-------------|---------------|-----------|
 | Retrieved from MP | A-retrieved | MP API returned valid data |
 | Normalized structure | A-computed | Normalization completed without errors |
-| Relaxed structure | A-computed | Relaxation converged AND structural checks pass |
+| Relaxed structure | A-computed | Relaxation converged AND structural checks pass AND material belongs to a benchmarked cathode family (layered_oxide, olivine_polyanion, spinel). Non-benchmarked families receive B-restricted. |
 | Lattice/volume deviation | A-compared | Comparison completed against valid reference |
 | Sanity check result | A-compared | All checks executed with defined thresholds |
 | Workflow summary | Inherits weakest | Contains only Level A constituents in MVP |
@@ -839,7 +855,7 @@ artifacts/
 - Any attempt to overwrite an existing artifact raises an `ArtifactError`.
 - Cache entries are the sole exception: they may be invalidated (deleted) and re-fetched.
 
-**Provenance tracking:** Every artifact carries a nested `ProvenanceRecord` linking it to its inputs, configuration, software versions, and parent artifacts. The `parent_ids` field forms a directed acyclic graph (DAG) of artifact lineage.
+**Provenance tracking:** Every artifact carries a nested `ProvenanceRecord` linking it to its inputs, configuration, software versions, parent artifacts, and the `git_commit` hash at runtime (null if not in a git repo or dirty working tree). The `parent_ids` field forms a directed acyclic graph (DAG) of artifact lineage.
 
 **Error handling:**
 - `ArtifactError("write_failure")` -- file write failed (disk full, permission denied)
@@ -925,18 +941,22 @@ BenchmarkSummary:
 | LiFePO4 | mp-19017 | olivine_polyanion | Phase 1 |
 | LiMn2O4 | mp-18767 | spinel | Phase 1 |
 
-**Metrics tracked per material:**
+**Metrics tracked per material** (24 total, per `benchmark_spec.md` Section 4):
 - Input resolution success/failure
 - Structure retrieval success/failure
 - Normalization success/failure
-- Relaxation convergence (yes/no, steps, final fmax)
+- Space group of input structure (informational)
+- Relaxation convergence (yes/no, steps, final fmax, final energy)
 - Lattice parameter deviations (a, b, c in %)
+- Angle deviations (alpha, beta, gamma in degrees)
 - Volume deviation (%)
-- Symmetry preservation (yes/no)
-- Bond length sanity (pass/fail)
+- Symmetry preservation (yes/no, output space group)
+- Symmetry tolerance used (`symprec_used`, informational)
+- Bond length sanity (min/max bond length, pass/fail)
 - Evidence labeling completeness
 - Report generation success/failure
-- Runtime in seconds
+- Runtime in seconds (informational)
+- Workflow version (informational)
 
 **Failure classification:** Every non-success result is categorized:
 - `retrieval_failure` -- MP API failure
@@ -964,7 +984,7 @@ Cross-reference: `benchmark_spec.md` for the full benchmark specification, metri
 
 ### 4.9 Agent Layer (Future -- Phase 5)
 
-The Agent Layer will provide LLM-driven orchestration over the validated workflow backend. Its design is deferred entirely to Phase 5, after the deterministic benchmark stack passes the Phase 4 gate. The core architectural constraint is that **the agent never owns scientific logic** — it selects and sequences workflows through the same Workflow Engine, Validation Layer, and Artifact Store that the deterministic pipeline uses. Detailed interface contracts, tool schemas, and interaction patterns will be specified in Phase 5 planning. No agent code or directory exists in the repository until Phase 5 begins.
+The Agent Layer will provide LLM-driven orchestration over the benchmarked workflow backend. Its design is deferred entirely to Phase 5, after the deterministic benchmark stack passes the Phase 4 gate. The core architectural constraint is that **the agent never owns scientific logic** — it selects and sequences workflows through the same Workflow Engine, Validation Layer, and Artifact Store that the deterministic pipeline uses. Detailed interface contracts, tool schemas, and interaction patterns will be specified in Phase 5 planning. No agent code or directory exists in the repository until Phase 5 begins.
 
 Cross-reference: `master_plan.md` Phase 5 (Agent Orchestration).
 
@@ -1110,7 +1130,7 @@ Cross-reference: `artifact_schema.md` Section 2.3 (ToolResult record).
 
 **Unknown-material exploration is a separate workflow family, never mixed into the benchmark core.**
 
-**Rationale:** The benchmark core's credibility depends on a clear trust boundary. Benchmark workflows process known materials with known references and produce Level A evidence. Exploration workflows process unknown or hypothetical materials where no reference exists and produce Level B or Level C evidence at best. Mixing these two families would contaminate the trust label: if the same workflow that produces trusted benchmark results also processes unknown materials, it becomes unclear which results carry which evidence level.
+**Rationale:** The benchmark core's credibility depends on a clear trust boundary. Benchmark workflows process known materials with known references and produce Level A evidence. Exploration workflows process unknown or hypothetical materials where no reference exists and produce Level B or Level C evidence at best. Mixing these two families would contaminate the trust label: if the same workflow that produces benchmarked results also processes unknown materials, it becomes unclear which results carry which evidence level.
 
 **Concrete guidance:**
 - Benchmark workflows are registered with a `family: "benchmark"` tag. Exploration workflows are registered with `family: "exploration"`.

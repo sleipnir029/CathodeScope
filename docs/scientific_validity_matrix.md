@@ -13,7 +13,7 @@ This document is the single authoritative reference for what CathodeScope can an
 
 ### Why This Document Exists
 
-CathodeScope is a **reproducible, benchmarked workflow system** that analyzes known cathode materials, runs atomistic workflows, compares results against trusted references, and produces disciplined, evidence-labeled reports. It does **not** claim full autonomous materials discovery, nor does it claim experimental validation of any computed property. Every output carries an explicit evidence level, and every claim in reports or thesis text must use wording consistent with this matrix.
+CathodeScope is a **reproducible, benchmarked workflow system** that analyzes known cathode materials, runs atomistic workflows, compares results against established computational references, and produces disciplined, evidence-labeled reports. It does **not** claim full autonomous materials discovery, nor does it claim experimental validation of any computed property. Every output carries an explicit evidence level, and every claim in reports or thesis text must use wording consistent with this matrix.
 
 ### How to Use This Document
 
@@ -40,14 +40,14 @@ CathodeScope assigns one of four evidence levels to every output. These levels a
 Outputs produced by benchmarked MVP workflows or retrieved from established reference sources. These can be stated directly in the thesis without additional caveats beyond identifying the method and source.
 
 **Characteristics:**
-- Produced by a workflow that has passed benchmark validation against known reference materials
+- Produced by a workflow that has passed benchmark comparison against known reference materials
 - Structural analysis outputs where MACE-relaxed results are within documented tolerance of Materials Project references
-- Retrieved data from established databases (Materials Project) with documented provenance
+- Retrieved data from established reference sources (Materials Project) with documented provenance
 - Reproducible: re-running the workflow on the same input produces the same output within numerical tolerance
 
 **Sub-categories:**
-- **A-retrieved**: Data retrieved from a trusted external source (e.g., Materials Project crystal structure)
-- **A-computed**: Data computed by a validated CathodeScope workflow (e.g., MACE-relaxed structure)
+- **A-retrieved**: Data retrieved from an established reference source (e.g., Materials Project crystal structure)
+- **A-computed**: Data computed by a benchmarked CathodeScope workflow (e.g., MACE-relaxed structure)
 - **A-compared**: Data produced by comparing computed results against references (e.g., lattice parameter deviation)
 
 ### Level B — Restricted Estimates
@@ -86,9 +86,9 @@ Claims that CathodeScope's methods cannot support. These must **never** appear i
 Use this flowchart to assign an evidence level to any CathodeScope output:
 
 ```
-Is the value retrieved from a trusted reference source?
+Is the value retrieved from an established reference source?
   YES --> Level A (retrieved)
-  NO  --> Is it computed by a validated CathodeScope workflow?
+  NO  --> Is it computed by a benchmarked CathodeScope workflow?
     YES --> Is the workflow part of the MVP benchmark core?
       YES --> Is the material from a benchmarked cathode family?
         YES --> Level A (computed)
@@ -113,8 +113,8 @@ This condensed table provides a quick reference. For full specifications includi
 |---|---|---|---|---|
 | 1 | Crystal Structure (Retrieved from MP) | A-retrieved | In MVP | MP-retrieved (Level A) |
 | 2 | Normalized Crystal Structure | A-computed | In MVP | Normalized (Level A) |
-| 3 | Relaxed Crystal Structure (MACE) | A-computed | In MVP | MACE-relaxed (Level A) |
-| 4 | Relaxed Lattice Parameters | A-computed | In MVP | MACE-computed (Level A) |
+| 3 | Relaxed Crystal Structure (MACE) | A-computed (benchmarked family) / B-restricted (other) | In MVP | MACE-relaxed (Level A if benchmarked family; Level B otherwise) |
+| 4 | Relaxed Lattice Parameters | A-computed (benchmarked family) / B-restricted (other) | In MVP | MACE-computed (Level A if benchmarked family; Level B otherwise) |
 | 5 | Relaxation Convergence Metadata | A-computed | In MVP | Convergence metadata (Level A) |
 | 6 | Lattice Parameter Deviation from Reference | A-compared | In MVP | Reference comparison (Level A) |
 | 7 | Bond Length and Coordination Comparison | A-compared | In MVP | Structural comparison (Level A) |
@@ -194,7 +194,7 @@ Each row below provides the complete nine-column specification for one CathodeSc
 | **Failure Modes** | Same as Row 3 (relaxation failures propagate to extracted parameters); additionally, confusion between primitive and conventional cell parameters |
 | **Confidence Label** | MACE-computed (Level A) |
 | **MVP Status** | In MVP |
-| **Notes** | Lattice parameters are derived quantities from the relaxed structure. They inherit all failure modes of the relaxation itself. Always report whether values correspond to the primitive or conventional cell. |
+| **Notes** | Lattice parameters are derived quantities from the relaxed structure. They inherit all failure modes of the relaxation itself. Always report whether values correspond to the primitive or conventional cell. **Conditional trust note:** Same as Row 3 — Level A is conditional on the material belonging to a benchmarked cathode family (layered oxide, olivine, spinel). Materials outside benchmarked families receive Level B until benchmark coverage is extended. |
 
 ---
 
@@ -242,7 +242,7 @@ Each row below provides the complete nine-column specification for one CathodeSc
 | **Failure Modes** | Cutoff radius too large/small for neighbor detection; mixed oxidation states confuse bond analysis; disordered sites in the reference structure lead to ambiguous bond lengths; different site labeling between relaxed and reference structures |
 | **Confidence Label** | Structural comparison (Level A) |
 | **MVP Status** | In MVP |
-| **Notes** | Bond length analysis depends on the neighbor-finding cutoff radius. Always report the cutoff used. Coordination numbers should be consistent with known crystal chemistry for the structure type (e.g., octahedral Co in layered LiCoO2 should have coordination number 6). |
+| **Notes** | Bond length analysis depends on the neighbor-finding cutoff radius. Always report the cutoff used. Coordination numbers should be consistent with known crystal chemistry for the structure type (e.g., octahedral Co in layered LiCoO2 should have coordination number 6). **Phase 1 note:** Phase 1 uses global min/max bond length bounds (1.0–4.0 Å) as sanity checks, not per-element expected ranges. Per-family expected bond length ranges will be added in Phase 4. |
 
 ---
 
@@ -447,7 +447,7 @@ Caveats are **part of the result**, not footnotes that can be omitted for brevit
 | "Average voltage: 3.9 V" | "Average voltage screening estimate: 3.9 V [Level B]. Based on MACE energy difference between lithiated and delithiated endpoints. Does not account for phase transformations or kinetic effects. Requires validation against experimental voltage." |
 | "Material is stable" | "Energy-above-hull proxy suggests stability (E_hull = 0.0 eV/atom from MP phase diagram) [Level C]. This is a screening signal based on GGA+U energetics and does not guarantee experimental synthesizability." |
 
-### Rule 10: Never Present Proxy Results Alongside Trusted Results Without Labeling
+### Rule 10: Never Present Proxy Results Alongside Benchmarked Results Without Labeling
 
 When a report contains both Level A and Level C results, the difference must be visually and textually obvious.
 

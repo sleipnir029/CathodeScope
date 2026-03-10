@@ -1,9 +1,10 @@
 # CathodeScope Internal Consistency Review
 
-**Version**: 2.1.0
+**Version**: 3.0.0
 **Date**: 2026-03-10
-**Status**: Pre-Implementation Audit — Fixes Applied
-**Fixes Applied**: 2026-03-10 — All Critical and High issues resolved; Medium issues addressed where feasible
+**Status**: Pre-Implementation Audit — Full Consistency Revision Applied
+**Fixes Applied**: 2026-03-10 (v2.1.0) — All Critical and High issues resolved; Medium issues addressed where feasible
+**Revision Applied**: 2026-03-10 (v3.0.0) — Documentation Consistency Revision: 12 blockers resolved across 10 files
 **Scope**: All 13 documents in `docs/`
 **Reviewer**: Automated architectural and scientific-consistency review
 **Standard**: Scientific defensibility over ambition; strict interpretation of all inter-document contracts
@@ -688,3 +689,80 @@ These must be resolved before implementation begins. They affect data model defi
 ---
 
 *This review prioritizes scientific defensibility. Every recommendation aims to make the thesis harder to challenge, the implementation harder to misunderstand, and the outputs harder to overclaim. Re-run this review after applying the immediate edits and again at each phase gate.*
+
+---
+
+## 12. Documentation Consistency Revision (v3.0.0)
+
+Applied 2026-03-10. This revision resolves 12 blockers across 10 files, treating `artifact_schema.md` as the schema source of truth.
+
+### Blocker Resolution Summary
+
+| Blocker | Description | Files Changed | Status |
+|---------|-------------|---------------|--------|
+| A. Workflow status | Verify 5-value status enum consistency | benchmark_spec.md | Verified consistent |
+| B. WorkflowContext | Remove "@dataclass (or pydantic model)" ambiguity — committed to @dataclass | architecture.md | **Fixed** |
+| C. Family classification | Add explicit rules: R-3m+LiMO2→layered_oxide, Pnma+LiMPO4→olivine_polyanion, Fd-3m+LiM2O4→spinel | architecture.md | **Fixed** |
+| D. Provenance | Add `git_commit: string \| null` field | artifact_schema.md, tdd_task_breakdown.md, architecture.md | **Fixed** |
+| E. Benchmark metrics | Expand BenchmarkRow example to all 24 metrics | artifact_schema.md | **Fixed** |
+| F. Scientific wording | Replace "trusted references"→"known references", "validated"→"benchmarked" across all files | All files | **Fixed** |
+| G. Config modeling | Verify pydantic v2 for config (no dataclass references) | architecture.md, implementation_order.md, tdd_task_breakdown.md | Verified consistent |
+| H. Integrity validation | Broaden scope: "hard_failure" only → any status other than success/partial_success | artifact_schema.md, tdd_task_breakdown.md | **Fixed** |
+| I. Regression comparison | Add benchmark/comparator.py reference | implementation_order.md, dependency_graph.md | **Fixed** |
+| J. Import rules | Already covered in TDD T-27 | — | Verified |
+| K. Phase gate clarity | Replace "Publication-quality Markdown output" with measurable criteria | master_plan.md | **Fixed** |
+| L. Benchmark thresholds | Define "near max_steps" as > 0.8 * max_steps | benchmark_spec.md | **Fixed** |
+
+### Cross-Cutting Changes Applied
+
+- **Scientific wording discipline (Fix F):** All files scanned for "trusted references", "validated" (without qualification), "proves". Replacements applied: "trusted references"→"known references" or "established computational references"; "validated workflows"→"benchmarked workflows".
+- **Evidence label conditionality:** architecture.md Section 4.5 now notes that non-benchmarked families receive Level B instead of Level A for relaxed structures.
+- **Partial success threshold:** benchmark_spec.md Section 5 now uses "> 0.8 * max_steps" instead of "close to max_steps".
+
+---
+
+## 13. Documentation Repair Pass (v3.1.0)
+
+Applied 2026-03-10. Principal architect repair pass targeting 16 issues across internal consistency, scientific wording, status enum standardization, typed containers, family classification, provenance completeness, evidence assignment, configuration, integrity validation, regression support, import-rule enforcement, phase gates, threshold definitions, and bond check conservatism.
+
+### Pre-existing Resolution
+
+Issues 1, 3, 4, 5, 6, 8, 9, 10, 11, 13, 14, 15, 16 were already resolved in the v3.0.0 revision documented above. Verified by re-reading the canonical files and confirming alignment with `artifact_schema.md` as source of truth.
+
+### New Fixes Applied
+
+| Issue | Description | Files Changed | Fix |
+|-------|-------------|---------------|-----|
+| 2 | Engine vs benchmark status distinction | `architecture.md` | Added distinction paragraph in Section 4.3 clarifying `WorkflowResult.status` (execution) vs `BenchmarkRow.status` (threshold classification) |
+| 7 | Scientific overclaiming wording | 6 files | Systematic replacement of "validated", "trusted", "correct", "proves" in scientific-claim contexts |
+| 12 | Import-rule enforcement in implementation_order.md | `implementation_order.md` | Added `tests/test_import_rules.py` to Phase 4 Hardening step (Step 14) |
+
+### Wording Fixes by File
+
+| File | Replacements |
+|------|-------------|
+| `master_plan.md` | "validated workflow backend"→"benchmarked workflow backend" (×2); "scientific trust"→"evidence discipline"; "validated tools"→"benchmarked tools"; "correct reports"→"schema-conformant, evidence-labeled reports"; "Trust preservation"→"Evidence consistency"; "validated, benchmarked stack"→"tested, benchmarked stack"; "stored, validated results"→"stored, reference-compared results"; "validated science"→"benchmarked science"; "Benchmark proves orchestration"→"Benchmark tests orchestration" |
+| `benchmark_spec.md` | "correct evidence labeling"→"consistent evidence labeling"; "can be trusted"→"should be relied upon" (×2); "present and correct"→"present and consistent"; "correct, reproducible"→"reproducible...consistent with known references"; "correct evidence labels"→"expected evidence labels"; "correct run"→"threshold-conformant run" (×2); "correct results"→"results consistent with Materials Project references" |
+| `architecture.md` | "validated workflow backend"→"benchmarked workflow backend"; "Every validated output"→"Every output passing through the validation layer" |
+| `demo_strategy.md` | Updated quoted benchmark philosophy to match benchmark_spec.md wording |
+| `implementation_order.md` | "stored, validated results"→"stored, reference-compared results"; "validated workflow results"→"reference-compared workflow results"; "validated known-material pipeline"→"benchmarked known-material pipeline"; "Scientific Validation Before Integration"→"Scientific Verification Before Integration"; "scientifically validated"→"scientifically verified" |
+| `subject_matter_expert_onboarding.md` | "deterministic, validated workflows"→"deterministic, benchmarked workflows"; "trusted reference data"→"established computational reference data"; "validated computational step"→"benchmarked computational step"; "Level A — Trusted"→"Level A — Benchmarked"; "Trusted Outputs"→"Level A Outputs" (heading + TOC); "trusted output"→"Level A output" (glossary); "validated against reference data"→"compared against reference data"; renamed section "Why 'trusted'" → "Why MP qualifies as a Level A reference source" |
+
+### Remaining "validated"/"trusted"/"proves" Instances — Verified Appropriate
+
+The following instances were reviewed and intentionally retained:
+
+| File | Instance | Reason Retained |
+|------|----------|-----------------|
+| `master_plan.md` lines 75, 78, 81 | "validated migration barriers", "proved thermodynamic stability", "proved dynamical stability" | Anti-claim examples (showing what NOT to say) |
+| `architecture.md` lines 240-241 | "validated as a chemical formula", "validated as mp-XXXXX format" | Input format parsing — engineering context, not scientific claim |
+| `scientific_validity_matrix.md` lines 176, 240, 256 | "Experimentally validated", "Bond lengths validated", "Symmetry proved" | Disallowed wording column (showing what NOT to write) |
+| `subject_matter_expert_onboarding.md` line 459 | "Validated migration barrier" | Disallowed claim example table |
+| `subject_matter_expert_onboarding.md` line 519 | "proves" | Instructional context telling implementers NOT to use the word |
+| `risk_heatmap.md` lines 60, 64, 200 | "validated", "proved" | Risk description and trigger analysis (meta-discussion) |
+| `demo_strategy.md` line 183 | "validated", "proved" | Instruction to avoid these words in presentations |
+| `tdd_task_breakdown.md`, `claude_code_execution_prompts.md` | Various | Test assertions checking for disallowed words; rule references |
+
+### Verification Method
+
+Full-text regex search for `\bvalidated\b`, `\btrusted\b`, `\bproves\b`, `\bproved\b`, `\bconfirms correctness\b`, and `\bcorrect\b` across all `docs/*.md` files. Each hit classified as: (a) scientific overclaim → fixed, (b) engineering context → retained, (c) disallowed-wording example → retained, (d) meta-discussion → retained.

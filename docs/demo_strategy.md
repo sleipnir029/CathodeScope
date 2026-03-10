@@ -54,7 +54,7 @@ Output:  Evidence-labeled Markdown report with:
 **Key talking points**:
 - "This is a computational comparison, not an experimental validation."
 - "Deviation means difference between two computational methods (MACE and PBE+U), not error."
-- "Evidence level A means: produced by a validated workflow with full provenance."
+- "Evidence level A means: produced by a benchmarked workflow with full provenance."
 
 ---
 
@@ -176,7 +176,7 @@ $ cathodescope benchmark
 - The anti-claims (`master_plan.md` Section 2). Show them what CathodeScope explicitly will NOT claim.
 - Reproducibility: run the benchmark twice, show identical result categories.
 - The distinction between "deviation from reference" and "error" (Rule 2 in `scientific_validity_matrix.md` Section 4).
-- The benchmark philosophy: "If CathodeScope cannot reproduce known results, nothing else it produces can be trusted" (`benchmark_spec.md` Section 1).
+- The benchmark philosophy: "If CathodeScope cannot reproduce known results for known materials, nothing else it produces should be relied upon" (`benchmark_spec.md` Section 1).
 
 **What to avoid**:
 - Overselling the agent capabilities.

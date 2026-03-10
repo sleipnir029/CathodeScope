@@ -101,6 +101,7 @@ Expanded from `architecture.md` Diagram 3. Arrows point from the dependent modul
 │  benchmark/runner.py             depends on: workflows/*, models/*, │
 │                                               provenance/*          │
 │  benchmark/registry.py           depends on: models/*               │
+│  benchmark/comparator.py         depends on: models/*               │
 │                                                                     │
 └─────────────────────────┬───────────────────────────────────────────┘
                           │

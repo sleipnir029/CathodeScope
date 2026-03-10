@@ -232,13 +232,13 @@ cathodescope/reporting/markdown_report.py
 tests/unit/test_report_generator.py
 ```
 
-**Rationale**: With stored, validated results, generate human-readable output. Reports consume artifacts; they do not produce them (`master_plan.md` Section 11, Step 8).
+**Rationale**: With stored, reference-compared results, generate human-readable output. Reports consume artifacts; they do not produce them (`master_plan.md` Section 11, Step 8).
 
 **What to mock**: Use fixture `WorkflowResult` and `CanonicalMaterial` objects.
 
 **Acceptance**: JSON report contains all `ReportRecord` fields per `artifact_schema.md` Section 2.4. Markdown report follows evidence label format from `scientific_validity_matrix.md` Section 5. Section headers include `[Level A -- computed]` labels. Assessment paragraph summarizes evidence levels.
 
-**Dependencies**: Steps 1, 8 (models, validated workflow results).
+**Dependencies**: Steps 1, 8 (models, reference-compared workflow results).
 
 ---
 
@@ -261,7 +261,7 @@ tests/integration/test_structural_analysis.py
 
 **What to use (integration test)**: Real tools with cached MP data and real MACE model. This is the LiCoO2 end-to-end acceptance test from `master_plan.md` Section 3.
 
-**Acceptance**: LiCoO2 processes end-to-end: formula -> NormalizedQuery -> structure -> normalization -> relaxation -> comparison -> validation -> report -> artifacts. All artifacts stored per `artifact_schema.md`. Report has correct evidence labels. No manual intervention required. Rerun produces same result category.
+**Acceptance**: LiCoO2 processes end-to-end: formula -> NormalizedQuery -> structure -> normalization -> relaxation -> comparison -> validation -> report -> artifacts. All artifacts stored per `artifact_schema.md`. Report has expected evidence labels per `scientific_validity_matrix.md`. No manual intervention required. Rerun produces same result category.
 
 **Dependencies**: All previous steps (1-10).
 
@@ -286,6 +286,9 @@ tests/integration/test_benchmark.py
 **What to use (integration)**: Full pipeline for LiCoO2, LiFePO4, LiMn2O4.
 
 **Acceptance**: 3 materials processed. At least 2/3 Full Success. Third at least Partial Success. `BenchmarkSummary` generated per `artifact_schema.md` Section 2.7. Per-material `BenchmarkRow` records stored. Failures classified per `benchmark_spec.md` categories.
+
+**Sub-items**:
+- **Benchmark regression comparison tool** (`benchmark/comparator.py`): Compares two `BenchmarkSummary` JSON files and reports status changes and metric deltas. Referenced as T-24b in `tdd_task_breakdown.md`. Required for Phase 2 gate criterion "Regression comparison possible."
 
 **Dependencies**: Step 11 (working single-material pipeline).
 
@@ -317,13 +320,14 @@ tests/unit/test_cli.py
 **Files**: All existing modules — enhanced, not new.
 ```
 tests/                                 # Expanded test coverage
+tests/test_import_rules.py            # Import-rule enforcement tests per dependency_graph.md Section 6
 cathodescope/validation/family_specific.py  # Expanded family checks
 docs/reproducibility_checklist.md      # New document
 ```
 
 **Rationale**: Make the system thesis-worthy. "It works" becomes "it is defensible" (`master_plan.md` Phase 4).
 
-**Acceptance**: Test coverage > 80% for core modules. Regression benchmark runs automatically. External reviewer can reproduce benchmark from documentation. All validity matrix wording rules enforced.
+**Acceptance**: Test coverage > 80% for core modules. Regression benchmark runs automatically. External reviewer can reproduce benchmark from documentation. All validity matrix wording rules enforced. Import-rule enforcement tests pass (`tests/test_import_rules.py` per `dependency_graph.md` Section 6).
 
 **Dependencies**: Steps 1-13.
 
@@ -369,6 +373,7 @@ provenance/store.py            depends on: models/*
     v
 benchmark/runner.py            depends on: workflows/*, models/*, provenance/*
 benchmark/registry.py          depends on: models/*
+benchmark/comparator.py        depends on: models/*
     |
     v
 app/cli.py                     depends on: workflows/*, benchmark/*
@@ -393,9 +398,9 @@ app/cli.py                     depends on: workflows/*, benchmark/*
 
 ---
 
-## 5. Scientific Validation Before Integration
+## 5. Scientific Verification Before Integration
 
-The following must be scientifically validated before being wired into the workflow engine:
+The following must be scientifically verified before being wired into the workflow engine:
 
 | Component | Validation Required | Reference |
 |-----------|-------------------|-----------|
@@ -418,37 +423,12 @@ The following components are explicitly deferred per `master_plan.md` Section 4:
 | Stability proxy workflow | Phase 6 | Requires phase diagram data and energy referencing |
 | Transport proxy workflow | Phase 6 | Requires NEB or equivalent, computationally expensive |
 | Dynamical stability proxy | Phase 6 | Gamma-point phonon check is only a proxy |
-| Candidate generation | Phase 6+ | Requires validated known-material pipeline first |
+| Candidate generation | Phase 6+ | Requires benchmarked known-material pipeline first |
 | Web UI / API server | Phase 3 (minimal), Phase 7 (polish) | Core value is the pipeline, not the interface |
 | Database-backed storage | Post-MVP | Local filesystem sufficient for 3 benchmark materials |
 | Multi-agent planner/critic | Phase 5+ | Needs proven single-agent first |
 
 **If you are tempted to build any of these early, re-read the identity test in `master_plan.md` Section 1.**
-
----
-
-## 7. Build Order to Phase Mapping
-
-**Note**: The mapping below is approximate. `master_plan.md` Section 11 uses a coarser 12-step conceptual order, while this document uses a granular 16-step build order. The mappings indicate which conceptual step(s) each build step corresponds to, not an exact 1:1 relationship.
-
-| Build Step | Phase | master_plan.md Step |
-|------------|-------|-------------------|
-| 1. Project scaffolding + models | 1 | Step 2 |
-| 2. Configuration system | 1 | (Supporting) |
-| 3. MP client + retrieval | 1 | Step 3 |
-| 4. Input resolver | 1 | Step 2-3 |
-| 5. Structure normalizer | 1 | Step 4 |
-| 6. Structure relaxer | 1 | Step 5 |
-| 7. Reference comparator | 1 | Step 6 |
-| 8. Validation layer | 1 | Step 6 |
-| 9. Artifact/provenance store | 1 | Step 7 |
-| 10. Report generator | 1 | Step 8 |
-| 11. Workflow engine + structural_analysis | 1 | Steps 2-8 |
-| 12. Benchmark runner | 2 | Step 9 |
-| 13. CLI interface | 3 | Step 10 |
-| 14. Phase 4 hardening | 4 | (All) |
-| 15. Agent orchestration | 5 | Step 11 |
-| 16. Advanced extensions | 6 | Step 12 |
 
 ---
 

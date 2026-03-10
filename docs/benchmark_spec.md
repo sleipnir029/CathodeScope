@@ -15,9 +15,9 @@ Without benchmarks, CathodeScope is just a script — a collection of tools stru
 
 The benchmark set must be **narrow and representative**, not aspirational. Three materials, chosen to span the structural diversity of commercial cathode families, are sufficient for the MVP. These are materials for which community-consensus reference data exists — structures, lattice parameters, space groups, voltages, and modeling behavior that have been studied extensively for decades. There is no ambiguity about what the "right answer" should look like for these materials.
 
-The system is designed to be **extensible toward unknown-material benchmarks later**, but unknown-material screening is not thesis-core. The benchmark tests whether CathodeScope produces results consistent with Materials Project references within defined thresholds, with correct evidence labeling and full reproducibility. Once that baseline is established, the platform can be extended to materials where the answers are not known in advance.
+The system is designed to be **extensible toward unknown-material benchmarks later**, but unknown-material screening is not thesis-core. The benchmark tests whether CathodeScope produces results consistent with Materials Project references within defined thresholds, with consistent evidence labeling and full reproducibility. Once that baseline is established, the platform can be extended to materials where the answers are not known in advance.
 
-**Core principle**: if CathodeScope cannot reproduce known results for known materials, nothing else it produces can be trusted.
+**Core principle**: if CathodeScope cannot reproduce known results for known materials, nothing else it produces should be relied upon.
 
 Cross-reference: `master_plan.md` benchmark philosophy section.
 
@@ -96,7 +96,7 @@ The values listed here are approximate for documentation purposes. The authorita
 | Experimental voltage | ~3.9 V vs Li/Li+ |
 | Key reference | Mizushima et al. (1980) — original discovery of electrochemical Li deintercalation from LiCoO2 |
 
-**Selection rationale:** The "hydrogen atom" of cathode science. LiCoO2 is the most-studied cathode material in history. It was the first commercialized Li-ion cathode (Sony, 1991) and remains the reference point against which all other cathode materials are compared. If CathodeScope cannot handle LiCoO2 — retrieve its structure, relax it, compare against references, and produce a correct evidence-labeled report — the system is fundamentally broken. This material is the minimum viable proof of correctness.
+**Selection rationale:** The "hydrogen atom" of cathode science. LiCoO2 is the most-studied cathode material in history. It was the first commercialized Li-ion cathode (Sony, 1991) and remains the reference point against which all other cathode materials are compared. If CathodeScope cannot handle LiCoO2 — retrieve its structure, relax it, compare against references, and produce a schema-conformant, evidence-labeled report — the system is fundamentally broken. This material is the minimum viable test of pipeline correctness.
 
 **Known modeling considerations:** Co3+/Co4+ oxidation states are well-captured by standard DFT with Hubbard U correction, and MACE-MP-0 (trained on Materials Project DFT data) is expected to reproduce the structure accurately. The layered R-3m structure is geometrically simple: a single lattice parameter ratio (c/a) largely characterizes the structure quality. The hexagonal symmetry with only two independent lattice parameters (a and c) makes deviation analysis straightforward. No known pathological modeling issues for the ground-state structure.
 
@@ -211,7 +211,7 @@ Every benchmark run is classified into exactly one of the following five categor
 
 ### Full Success
 
-All metrics pass their success criteria. The report is generated without errors. All evidence labels are present and correct per the scientific validity matrix. The relaxed structure preserves the input space group, all lattice parameter deviations are below 2%, volume deviation is below 5%, all bond lengths are within physical bounds, and the workflow converged within the configured step limit.
+All metrics pass their success criteria. The report is generated without errors. All evidence labels are present and consistent with the scientific validity matrix. The relaxed structure preserves the input space group, all lattice parameter deviations are below 2%, volume deviation is below 5%, all bond lengths are within hard bounds (min > 1.0 A, max M-O < 4.0 A), and the workflow converged within the configured step limit.
 
 This is the target outcome. A Full Success on a benchmark material means CathodeScope's structural analysis workflow produces results consistent with Materials Project references for that material.
 
@@ -221,18 +221,18 @@ The workflow completed end-to-end — all steps executed, a report was generated
 
 - Lattice parameter deviation > 2% but < 5%
 - Volume deviation > 5% but < 10%
-- Relaxation converged but required more steps than expected (close to max_steps)
-- Bond lengths are within physical bounds but outside expected ranges for the crystal chemistry
+- Relaxation converged but required more steps than expected (> 0.8 * max_steps)
+- Bond lengths are within hard bounds (1.0–4.0 A) but near the boundary values (Phase 1 uses hard bounds only; per-family expected ranges deferred to Phase 4)
 
 A Partial Success is still a valid scientific result. It means the MACE model is less accurate for this particular material or structure type, which is itself useful information. The result is stored, reported, and included in benchmarks. It is not treated as a failure of the system — it is a characterization of the model's accuracy.
 
 ### Soft Failure
 
-The workflow completed but with warnings that require human attention before the results can be trusted. Examples:
+The workflow completed but with warnings that require human review before the results should be relied upon for further analysis. Examples:
 
 - Symmetry broken during relaxation (space group reduced to a subgroup, e.g., R-3m to C2/m)
 - Borderline convergence: `fmax` just above the configured threshold at the step limit
-- Unusual bond lengths that pass sanity checks (> 1.0 A, < 4.0 A) but are outside expected ranges for the material's crystal chemistry
+- Bond lengths within hard bounds (> 1.0 A, < 4.0 A) but near the boundary values (e.g., min bond < 1.2 A or max M-O > 3.5 A); per-family expected ranges deferred to Phase 4
 - Evidence labeling incomplete or inconsistent in the generated report
 - Relaxation oscillating (energy not monotonically decreasing) but eventually converging
 
@@ -284,7 +284,7 @@ The following table defines the quantitative boundaries for each result category
 | Symmetry | Preserved | Preserved | Broken to subgroup | Indeterminate / collapsed | N/A |
 | Bond lengths (M-O) | All within 1.0–4.0 Å | All within 1.0–4.0 Å | Borderline (near 1.0 Å or near 4.0 Å) | < 1.0 Å (overlap) or > 4.0 Å | N/A |
 | Convergence | fmax < threshold within max_steps | Converged but steps > 0.8 * max_steps | Borderline: fmax just above threshold | Diverged (NaN, Inf, or collapse) | N/A |
-| Evidence labeling | All labels present and correct | All labels present and correct | Incomplete or inconsistent | Report not generated | N/A |
+| Evidence labeling | All labels present and consistent | All labels present and consistent | Incomplete or inconsistent | Report not generated | N/A |
 | Report generation | JSON + Markdown produced | JSON + Markdown produced | Produced with warnings | Not produced | N/A |
 
 **Note on bond lengths:** Bond length classification is pass/fail in Phase 1 — Full Success and Partial Success share the same criterion (all within 1.0–4.0 Å). Per-family expected bond length ranges will be added in Phase 4.
@@ -299,7 +299,7 @@ Cross-reference: `architecture.md` error handling strategy, `artifact_schema.md`
 
 ## 6. Phase 1 Benchmark Criteria (MVP)
 
-The MVP benchmark is intentionally minimal. Its purpose is to demonstrate that CathodeScope can run a single workflow against a small set of known materials and produce correct, reproducible, evidence-labeled results. It is not a comprehensive evaluation of MACE accuracy or a survey of cathode chemistry.
+The MVP benchmark is intentionally minimal. Its purpose is to demonstrate that CathodeScope can run a single workflow against a small set of known materials and produce reproducible, evidence-labeled results consistent with known references. It is not a comprehensive evaluation of MACE accuracy or a survey of cathode chemistry.
 
 ### Scope
 
@@ -326,7 +326,7 @@ If the reproducibility criterion fails, this indicates a non-determinism bug in 
 
 ### Evidence Labeling Criterion
 
-All outputs in all reports have correct evidence labels per the scientific validity matrix (`scientific_validity_matrix.md`). Specifically:
+All outputs in all reports have expected evidence labels per the scientific validity matrix (`scientific_validity_matrix.md`). Specifically:
 
 - Retrieved MP data is labeled `[Level A -- retrieved]`
 - MACE-relaxed structures are labeled `[Level A -- computed]`
@@ -339,7 +339,7 @@ All outputs in all reports have correct evidence labels per the scientific valid
 
 - **All 3 materials achieving Full Success.** Partial Success on 1 material is acceptable and scientifically informative.
 - **Specific numerical accuracy targets beyond the threshold table.** The thresholds in Section 4 define pass/fail. There is no "extra credit" for achieving tighter deviations.
-- **Performance benchmarks.** Runtime is recorded but not judged. A slow but correct run passes; a fast but wrong run fails.
+- **Performance benchmarks.** Runtime is recorded but not judged. A slow but threshold-conformant run passes; a fast but threshold-violating run fails.
 - **Comparison against experimental data.** All comparisons are against Materials Project computed references. Experimental comparison is deferred to Phase 4+.
 - **Voltage estimation.** Voltage benchmarking requires the delithiated structure workflow, which is not part of the MVP.
 - **Stability assessment.** Neither thermodynamic nor dynamical stability is evaluated in Phase 1.
@@ -384,7 +384,7 @@ These calculations are computationally expensive (the supercell requirement mult
 
 **Excluded as a success criterion.** Runtime is recorded in every benchmark run (`runtime_seconds` metric) but is NOT used to determine pass/fail. Correctness first, performance optimization later.
 
-A slow but correct run is better than a fast but wrong one. Performance optimization is a Phase 7 activity (paper polish). During the MVP and thesis-core phases, the only performance requirement is that benchmark runs complete in a reasonable time for a development workflow (minutes, not hours, for a single material). This is not formalized as a threshold because hardware varies.
+A slow but threshold-conformant run is better than a fast but threshold-violating one. Performance optimization is a Phase 7 activity (paper polish). During the MVP and thesis-core phases, the only performance requirement is that benchmark runs complete in a reasonable time for a development workflow (minutes, not hours, for a single material). This is not formalized as a threshold because hardware varies.
 
 Informational timing target: single-material pipeline should complete in < 10 minutes wall-clock on the reference development machine (CPU-only). Exceeding this triggers performance investigation but does not constitute a benchmark failure.
 
@@ -413,7 +413,7 @@ None of these are implemented in the MACE-MP-0 release used by CathodeScope. Thi
 
 **Excluded.** Comparing MACE against other ML interatomic potentials (e.g., M3GNet, CHGNet, SevenNet) or against direct DFT calculations (PBE+U, SCAN, hybrid functionals) would be valuable for a publication but is not required for the MVP benchmark.
 
-The MVP benchmark establishes that CathodeScope produces correct results with MACE-MP-0. Cross-model comparison is a Phase 7 (paper polish) activity that would strengthen the publication but does not affect the thesis-core demonstration of the reproducible workflow platform. If performed, cross-model results would be presented as supplementary material showing where MACE-MP-0 sits relative to other methods, not as a core benchmark requirement.
+The MVP benchmark establishes that CathodeScope produces results consistent with Materials Project references using MACE-MP-0. Cross-model comparison is a Phase 7 (paper polish) activity that would strengthen the publication but does not affect the thesis-core demonstration of the reproducible workflow platform. If performed, cross-model results would be presented as supplementary material showing where MACE-MP-0 sits relative to other methods, not as a core benchmark requirement.
 
 ---
 

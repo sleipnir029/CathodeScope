@@ -24,9 +24,9 @@
 
 ## 1. Project Identity
 
-**CathodeScope** is a reproducible scientific workflow platform for benchmarked Li-ion cathode screening, with agent orchestration layered on top of deterministic validated workflows.
+**CathodeScope** is a reproducible scientific workflow platform for benchmarked Li-ion cathode screening, with agent orchestration layered on top of deterministic, benchmarked workflows.
 
-The key phrase is *reproducible scientific workflow platform*. CathodeScope is not a discovery engine, not a materials database, and not an autonomous research agent. It is a disciplined pipeline that takes known cathode materials, processes them through validated computational workflows, compares results against trusted references, and produces evidence-labeled reports. Agent orchestration is a usability layer added later — it does not replace or weaken the deterministic scientific core.
+The key phrase is *reproducible scientific workflow platform*. CathodeScope is not a discovery engine, not a materials database, and not an autonomous research agent. It is a disciplined pipeline that takes known cathode materials, processes them through benchmarked computational workflows, compares results against known references, and produces evidence-labeled reports. Agent orchestration is a usability layer added later — it does not replace or weaken the deterministic scientific core.
 
 ### The Identity Test
 
@@ -45,7 +45,7 @@ This test is the single most important filter against scope creep and overclaimi
 
 ### Primary Claim (Thesis-Core)
 
-> A reproducible, benchmarked workflow system that can analyze known cathode materials, run selected atomistic workflows, compare against trusted references, and produce disciplined evidence-labeled reports.
+> A reproducible, benchmarked workflow system that can analyze known cathode materials, run selected atomistic workflows, compare against known references, and produce disciplined evidence-labeled reports.
 
 This claim is defensible through Phases 1-4. It does not require agent orchestration, unknown-material handling, or advanced scientific extensions. It requires:
 
@@ -56,7 +56,7 @@ This claim is defensible through Phases 1-4. It does not require agent orchestra
 
 ### Supporting Claim (Later Phase)
 
-> Agent orchestration over the validated workflow backend improves usability without weakening scientific trust.
+> Agent orchestration over the benchmarked workflow backend improves usability without weakening evidence discipline.
 
 This claim is pursued in Phase 5. It is explicitly secondary to the primary claim. The thesis can succeed without it. It requires:
 
@@ -113,7 +113,7 @@ This is the irreducible core of CathodeScope. Every word in this sentence maps t
 
 | Excluded Feature | Reason |
 |------------------|--------|
-| Unknown-material trust or generation | Requires validated known-material pipeline first |
+| Unknown-material trust or generation | Requires benchmarked known-material pipeline first |
 | Rigorous transport claims | Migration barriers require NEB/MD, not MVP scope |
 | Strong stability proof | Thermodynamic stability requires phase diagram rigor |
 | Agent-first workflow | Deterministic stack must work independently before agent layer |
@@ -133,7 +133,7 @@ This is the irreducible core of CathodeScope. Every word in this sentence maps t
 **Pass criteria:**
 - Lattice parameter comparison present in report with deviation values
 - All deviations within defined thresholds (< 2% for lattice parameters)
-- All evidence labels in the report are Level A (validated comparison against trusted reference)
+- All evidence labels in the report are Level A (reference-compared against known Materials Project references)
 - Artifacts stored per `artifact_schema.md`
 - Rerun on the same machine with the same environment produces the same result category
 - No silent failures (all errors are caught, classified, and reported)
@@ -144,10 +144,10 @@ This is the irreducible core of CathodeScope. Every word in this sentence maps t
 
 | Feature | Reason Deferred | Phase Planned | Architecture Hook |
 |---------|----------------|---------------|-------------------|
-| Unknown-material generation | Trust framework for unknowns requires validated known-material pipeline first | Phase 6 | Separate workflow family per Extension Rule 5 |
+| Unknown-material generation | Trust framework for unknowns requires benchmarked known-material pipeline first | Phase 6 | Separate workflow family per Extension Rule 5 |
 | Rigorous transport properties | Migration barrier calculations require NEB or MD, computationally expensive and scientifically complex | Phase 6 | `transport_proxy` tool interface defined |
 | Strong stability proof | Thermodynamic stability requires accurate phase diagram data and energy referencing beyond MP comparison | Phase 6 | `stability_workflow` tool interface defined |
-| Agent orchestration | Agent must orchestrate validated tools, not replace them; deterministic stack must work first | Phase 5 | Agent layer defined in architecture, tool schemas ready |
+| Agent orchestration | Agent must orchestrate benchmarked tools, not replace them; deterministic stack must work first | Phase 5 | Agent layer defined in architecture, tool schemas ready |
 | Dynamical stability | Full phonon dispersion is computationally expensive; gamma-point is only a proxy | Phase 6 | `dynamics_workflow` tool interface defined |
 | Multi-agent planner/critic | Advanced orchestration requires proven single-agent workflow selection first | Phase 5+ | Agent layer extensible |
 | Large-scale candidate screening | Requires trust in unknown-material workflows, which are not thesis-core | Phase 6+ | Candidate generation workflow interface defined |
@@ -204,7 +204,7 @@ Every deferred feature has an **architecture hook** — a defined interface or e
 - **Physics validator** — Checks results against physical plausibility bounds (e.g., positive volume, reasonable bond lengths)
 - **Report generator** — Produces evidence-labeled Markdown report
 - **Artifact/provenance store** — Stores all inputs, outputs, parameters, and metadata per `artifact_schema.md`
-- **One trusted run for LiCoO2** — The acceptance test defined in Section 3
+- **One successful run for LiCoO2** — The acceptance test defined in Section 3
 
 **Dependencies:** Phase 0 complete (all 6 docs written and gate passed)
 
@@ -322,7 +322,7 @@ Every deferred feature has an **architecture hook** — a defined interface or e
 
 ### Phase 5 — Agent Orchestration
 
-**Goal:** Add LLM orchestration over the validated backend. The agent selects and executes workflows — it does not replace them.
+**Goal:** Add LLM orchestration over the benchmarked backend. The agent selects and executes workflows — it does not replace them.
 
 **Deliverables:**
 - **Tool schemas** — JSON Schema format definitions for each tool the agent can invoke
@@ -375,7 +375,7 @@ Every deferred feature has an **architecture hook** — a defined interface or e
 **Gate criteria (per extension):**
 - [ ] `scientific_validity_matrix.md` updated with new rows BEFORE workflow implementation begins
 - [ ] Extension passes its own benchmark with defined reference data
-- [ ] Evidence labels correct (Level B or C as appropriate, never Level A for proxies)
+- [ ] Evidence labels consistent with validity matrix (Level B or C as appropriate, never Level A for proxies)
 - [ ] Extension does not break existing workflows (regression test passes)
 - [ ] Extension documentation includes explicit limitations and caveats
 - [ ] Anti-claims updated if new overclaiming risks are identified
@@ -456,7 +456,7 @@ When a gate is passed, record:
 
 The gate checks **minimum viability** for the next phase, not perfection. Perfection is a Phase 4 and Phase 7 concern. For example:
 
-- Phase 1 gate does not require beautiful reports — it requires *correct* reports.
+- Phase 1 gate does not require beautiful reports — it requires *schema-conformant, evidence-labeled* reports.
 - Phase 2 gate does not require 3/3 Full Success — it requires 2/3 Full Success and 1/3 Partial Success minimum.
 - Phase 3 gate does not require a polished web UI — it requires a working CLI demo.
 
@@ -498,7 +498,7 @@ These three families cover the three major structural archetypes of commercial L
 
 Every material in the benchmark **must already have reliable reference data**. The benchmark does not aspire to characterize new materials or push computational boundaries. It answers one question:
 
-> "Does CathodeScope's pipeline produce results consistent with known, trusted references for well-studied materials?"
+> "Does CathodeScope's pipeline produce results consistent with known references for well-studied materials?"
 
 If the answer is yes, the pipeline produces results consistent with known references within defined thresholds. If the answer is no, the pipeline needs fixing — not the benchmark.
 
@@ -536,7 +536,7 @@ If the answer is yes, the pipeline produces results consistent with known refere
 |-----------|-------------------|
 | Demo speed | 3-minute demo from formula input to viewable report |
 | Interface | CLI works with documented usage |
-| Report quality | Publication-quality Markdown output |
+| Report quality | Reports render correctly in standard Markdown viewers, all section headers include evidence level labels, all quantitative values include units, and report structure matches `scientific_validity_matrix.md` Section 5 template |
 | Artifact completeness | All demo run artifacts complete and valid |
 
 ### Phase 4 Success (Thesis-Core)
@@ -556,7 +556,7 @@ If the answer is yes, the pipeline produces results consistent with known refere
 | Criterion | Measurable Target |
 |-----------|-------------------|
 | Usability improvement | Agent reduces steps for common workflows |
-| Trust preservation | Agent results match scripted results |
+| Evidence consistency | Agent results match scripted results |
 | Auditability | Agent decisions fully traceable |
 | Wording compliance | Agent outputs respect validity matrix constraints |
 
@@ -582,7 +582,7 @@ The following are explicitly **not** success criteria for the thesis:
 | 2 | Scope creep | High | High | **Critical** | Phase gates; identity test for all features; no advanced extensions before benchmark core works; decision log | Author |
 | 3 | Hardware/runtime mismatch | Medium | Medium | **High** | Small benchmark first; overnight jobs only after deterministic stack is stable; strict profiling; resource budgets | Author |
 | 4 | Agent complexity arriving too early | Medium | High | **High** | No agent before workflow engine + benchmark (Phase 5 gate); deterministic stack must pass Phase 4 gate first | Author |
-| 5 | Benchmark proves orchestration but not science | Medium | High | **High** | Structure and comparison quality are first-class metrics, not just "did it run"; quantitative deviation thresholds | Author |
+| 5 | Benchmark tests orchestration but not science | Medium | High | **High** | Structure and comparison quality are first-class metrics, not just "did it run"; quantitative deviation thresholds | Author |
 | 6 | Dependency brittleness (MP API changes, MACE updates) | Medium | Medium | **High** | Mock-first tests; local fixtures; cached MP responses; pinned environment; version-locked dependencies | Author |
 | 7 | Extension hooks too vague | Low | Medium | **Medium** | Define interface contracts in `architecture.md` during Phase 0; review interfaces at each gate | Author |
 | 8 | Report layer becomes vague or narrative | Medium | Medium | **Medium** | Machine-readable report schema first, Markdown rendering second; schema validation on every report | Author |
@@ -613,7 +613,7 @@ The following are explicitly **not** success criteria for the thesis:
 
 | Feature | Reason Deferred | Phase Planned | Architecture Hook |
 |---------|----------------|---------------|-------------------|
-| Unknown-material generation | Requires validated pipeline first; trust framework for unknowns is a separate research problem | Phase 6 | Separate workflow family |
+| Unknown-material generation | Requires benchmarked pipeline first; trust framework for unknowns is a separate research problem | Phase 6 | Separate workflow family |
 | Multi-agent planner/critic | Needs proven single-agent first; multi-agent adds coordination complexity | Phase 5+ | Agent layer extensible |
 | Transport proxy | Computationally complex, scientifically nuanced; migration barriers require NEB or equivalent | Phase 6 | Tool interface defined |
 | Dynamical stability proxy | Gamma-point is only a proxy; full phonon dispersion is computationally expensive | Phase 6 | Tool interface defined |
@@ -661,10 +661,10 @@ Input --> Process --> Validate --> Store --> Report --> Benchmark --> Orchestrat
 | 5 | **Relaxation workflow** | This is the primary computation. It requires steps 2-4 to exist (a canonical, normalized structure to relax). |
 | 6 | **Reference comparison** | You need both a relaxed structure (step 5) and a reference (step 3) to compare. This is where scientific value is generated. |
 | 7 | **Artifact/provenance storage** | Now that you have outputs to store, build the storage layer. Storing artifacts retroactively is error-prone. |
-| 8 | **Report generation** | With stored, validated results, generate the human-readable output. Reports consume artifacts; they do not produce them. |
+| 8 | **Report generation** | With stored, reference-compared results, generate the human-readable output. Reports consume artifacts; they do not produce them. |
 | 9 | **Benchmark runner** | With a working pipeline, run it across the benchmark set. The runner is an orchestrator of the existing pipeline, not new science. |
 | 10 | **Minimal interface/demo** | Wrap the pipeline in a usable CLI. The interface is a thin layer over the existing components. |
-| 11 | **Agent orchestration** | Layer the agent on top of the validated, benchmarked stack. The agent calls the same tools the CLI calls. |
+| 11 | **Agent orchestration** | Layer the agent on top of the tested, benchmarked stack. The agent calls the same tools the CLI calls. |
 | 12 | **Advanced extensions** | Build additional scientific workflows using the established patterns. Each extension follows the same build-validate-benchmark cycle. |
 
 ### Why This Order Matters
@@ -676,7 +676,7 @@ Input --> Process --> Validate --> Store --> Report --> Benchmark --> Orchestrat
 
 Skipping or reordering steps creates hidden dependencies and untested assumptions. For example:
 
-- Building the agent (step 11) before the comparison module (step 6) means the agent has no validated science to orchestrate.
+- Building the agent (step 11) before the comparison module (step 6) means the agent has no benchmarked science to orchestrate.
 - Building reports (step 8) before artifact storage (step 7) means reports cannot reference stored provenance.
 - Building the benchmark runner (step 9) before the single-material pipeline (steps 2-8) means you are benchmarking an incomplete system.
 
