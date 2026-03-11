@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-18 Done; 8/32 tasks complete)
+**Last Updated**: 2026-03-11 (T-04 Done; 9/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -148,14 +148,15 @@
 | **Why it exists** | Completes the full model layer. Report and benchmark models are needed before the reporting and benchmark subsystems can be built. |
 | **Dependencies** | T-01 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
+| **Completed** | 2026-03-11 |
 | **Files affected** | `cathodescope/models/reports.py`, `tests/unit/test_models/test_reports.py` |
 | **Tests required** | 18 tests: ReportSection (3), ReportRecord (6), BenchmarkRow (4), BenchmarkSummary (5) |
 | **Acceptance criteria** | All 18 tests pass. `BenchmarkSummary` rejects inconsistent `materials_count` / `status_counts` / `rows`. |
 | **Scientific review** | No |
-| **Notes** | Do not create rendering logic in models — models are pure data. `ReportRecord` includes `raw_user_input` field. **⚠️ Sequence drift**: planned for Wave 1 position 6 but was skipped. Must be completed before T-06 and T-15 can start. |
+| **Notes** | Do not create rendering logic in models — models are pure data. `ReportRecord` includes `raw_user_input` field. **⚠️ Sequence drift**: planned for Wave 1 position 6 but was skipped. Must be completed before T-06 and T-15 can start. 18/18 tests pass; ruff + mypy --strict clean; 147/147 total suite passes. |
 
 ---
 
