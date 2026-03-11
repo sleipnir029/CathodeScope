@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11
+**Last Updated**: 2026-03-11 (T-00 Done)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -53,14 +53,15 @@
 | **Why it exists** | Every subsequent task depends on an installable package and a working test runner. Nothing else can start without this. |
 | **Dependencies** | None |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `pyproject.toml`, `.gitignore`, `.pre-commit-config.yaml`, all `__init__.py` files, all empty placeholder source and test files, `tests/conftest.py`, `tests/test_import_rules.py` (placeholder) |
 | **Tests required** | `test_package_importable()`, `test_all_subpackages_importable()` |
 | **Acceptance criteria** | `pip install -e ".[dev]"` succeeds. `pytest tests/` discovers and runs tests (0 failures). `ruff check cathodescope/` passes. `mypy cathodescope/` passes. |
 | **Scientific review** | No |
-| **Notes** | No business logic. No pydantic models. No fixture data. Just the skeleton. |
+| **Completed** | 2026-03-11 |
+| **Notes** | Skeleton created. `setuptools.build_meta` used (not `setuptools.backends.legacy` — not available in this environment). All 9 subpackages importable. 2/2 tests pass. ruff + mypy clean. |
 
 ---
 
