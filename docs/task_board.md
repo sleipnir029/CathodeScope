@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-00 Done)
+**Last Updated**: 2026-03-11 (T-01 Done)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -80,14 +80,15 @@
 | **Why it exists** | `ProvenanceRecord` is embedded in every other data record. It must exist first so all other models can reference it. |
 | **Dependencies** | T-00 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/models/provenance.py`, `tests/unit/test_models/test_provenance.py` |
 | **Tests required** | 15 tests: creation, validation, serialization, deserialization, factory function, optional fields |
 | **Acceptance criteria** | All 15 tests pass. `ProvenanceRecord.model_dump()` produces valid JSON. Round-trip via `model_validate()`. `create_provenance()` returns fully-populated record. |
 | **Scientific review** | No |
-| **Notes** | Do not import from any other `cathodescope` module. `created_by` uses `Literal["cathodescope", "user", "agent"]`. |
+| **Completed** | 2026-03-11 |
+| **Notes** | 17 fields implemented: record_id, created_at, created_by, tool_name, tool_version, cathodescope_version, python_version, hostname, platform, workflow_run_id, step_name, elapsed_seconds, input_hash, output_hash, config_snapshot, notes, tags. `create_provenance()` auto-populates system fields. `sample_provenance` fixture added to conftest.py. ruff + mypy --strict clean. |
 
 ---
 

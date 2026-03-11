@@ -12,6 +12,8 @@ from unittest.mock import patch
 
 import pytest
 
+from cathodescope.models.provenance import ProvenanceRecord
+
 
 @pytest.fixture
 def frozen_time() -> Iterator[str]:
@@ -20,8 +22,21 @@ def frozen_time() -> Iterator[str]:
     Yields the ISO-8601 string of the frozen time.
     """
     canonical = "2026-01-01T00:00:00Z"
-    # Real freezegun integration added in T-01 when datetime is used in models.
     yield canonical
+
+
+@pytest.fixture
+def sample_provenance() -> ProvenanceRecord:
+    """Return a minimal ProvenanceRecord suitable for use in unit tests."""
+    return ProvenanceRecord(
+        created_by="cathodescope",
+        tool_name="test_tool",
+        tool_version="0.1.0",
+        cathodescope_version="0.1.0",
+        python_version="3.11.0",
+        hostname="testhost",
+        platform="linux",
+    )
 
 
 @pytest.fixture
