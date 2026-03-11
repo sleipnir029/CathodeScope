@@ -227,6 +227,9 @@ Every deferred feature has an **architecture hook** — a defined interface or e
 - [ ] Lattice parameter deviation from MP reference < 2%
 - [ ] Offline pipeline completion with cached fixtures (no live network dependency for gate pass)
 - [ ] Post-run integrity check per `artifact_schema.md` Section 7 passes (all required artifacts present on disk)
+- [ ] Evidence labels in generated report match `scientific_validity_matrix.md` rules for each output type (automated integration test)
+- [ ] JSON report and Markdown report are consistent (same sections, evidence labels, and numeric values)
+- [ ] MACE-MP-0 checkpoint loads and completes a single-point energy calculation (pre-flight check before integration testing)
 
 ---
 

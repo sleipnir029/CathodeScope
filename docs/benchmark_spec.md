@@ -17,7 +17,7 @@ The benchmark set must be **narrow and representative**, not aspirational. Three
 
 The system is designed to be **extensible toward unknown-material benchmarks later**, but unknown-material screening is not thesis-core. The benchmark tests whether CathodeScope produces results consistent with Materials Project references within defined thresholds, with consistent evidence labeling and full reproducibility. Once that baseline is established, the platform can be extended to materials where the answers are not known in advance.
 
-**Core principle**: if CathodeScope cannot reproduce known results for known materials, nothing else it produces should be relied upon.
+**Core principle**: if CathodeScope cannot produce results consistent with known references for known materials, nothing else it produces should be relied upon.
 
 Cross-reference: `master_plan.md` benchmark philosophy section.
 
@@ -98,7 +98,7 @@ The values listed here are approximate for documentation purposes. The authorita
 
 **Selection rationale:** The "hydrogen atom" of cathode science. LiCoO2 is the most-studied cathode material in history. It was the first commercialized Li-ion cathode (Sony, 1991) and remains the reference point against which all other cathode materials are compared. If CathodeScope cannot handle LiCoO2 — retrieve its structure, relax it, compare against references, and produce a schema-conformant, evidence-labeled report — the system is fundamentally broken. This material is the minimum viable test of pipeline correctness.
 
-**Known modeling considerations:** Co3+/Co4+ oxidation states are well-captured by standard DFT with Hubbard U correction, and MACE-MP-0 (trained on Materials Project DFT data) is expected to reproduce the structure accurately. The layered R-3m structure is geometrically simple: a single lattice parameter ratio (c/a) largely characterizes the structure quality. The hexagonal symmetry with only two independent lattice parameters (a and c) makes deviation analysis straightforward. No known pathological modeling issues for the ground-state structure.
+**Known modeling considerations:** Co3+/Co4+ oxidation states are well-captured by standard DFT with Hubbard U correction, and MACE-MP-0 (trained on Materials Project DFT data) is expected to produce a relaxed structure within defined threshold tolerances of the MP reference. The layered R-3m structure is geometrically simple: a single lattice parameter ratio (c/a) largely characterizes the structure quality. The hexagonal symmetry with only two independent lattice parameters (a and c) makes deviation analysis straightforward. No known pathological modeling issues for the ground-state structure.
 
 ---
 
@@ -117,7 +117,7 @@ The values listed here are approximate for documentation purposes. The authorita
 
 **Selection rationale:** Structurally very different from LiCoO2. The orthorhombic Pnma symmetry, polyanion (PO4) framework, and 1D Li diffusion channels test whether CathodeScope's workflow generalizes beyond hexagonal layered oxides. If the system handles both LiCoO2 and LiFePO4 correctly, it demonstrates structural generality across two fundamentally different crystal chemistries. LiFePO4 is commercially dominant in the EV and grid storage markets, ensuring abundant reference data for validation. The three independent lattice parameters (a, b, c) provide a more stringent structural test than the two-parameter hexagonal case.
 
-**Known modeling considerations:** The polyanion framework (PO4 tetrahedra) adds chemical complexity beyond simple binary oxides. The P-O bonds are strongly covalent, and the accuracy of these bonds affects the overall structural relaxation. Fe2+/Fe3+ redox is well-characterized and should be accessible to MACE. The Pnma structure has more atoms in the conventional cell than R-3m LiCoO2 (28 atoms vs 12 atoms in the conventional cell), which tests the workflow's handling of larger unit cells. The strong P-O covalent bonds provide a local structural rigidity that should be well-reproduced by the MACE potential.
+**Known modeling considerations:** The polyanion framework (PO4 tetrahedra) adds chemical complexity beyond simple binary oxides. The P-O bonds are strongly covalent, and the accuracy of these bonds affects the overall structural relaxation. Fe2+/Fe3+ redox is well-characterized and should be accessible to MACE. The Pnma structure has more atoms in the conventional cell than R-3m LiCoO2 (28 atoms vs 12 atoms in the conventional cell), which tests the workflow's handling of larger unit cells. The strong P-O covalent bonds provide a local structural rigidity that should be well-captured by the MACE potential.
 
 ---
 
@@ -222,7 +222,7 @@ The workflow completed end-to-end — all steps executed, a report was generated
 - Lattice parameter deviation > 2% but < 5%
 - Volume deviation > 5% but < 10%
 - Relaxation converged but required more steps than expected (> 0.8 * max_steps)
-- Bond lengths are within hard bounds (1.0–4.0 A) but near the boundary values (Phase 1 uses hard bounds only; per-family expected ranges deferred to Phase 4)
+- Bond lengths are within hard bounds (1.0–4.0 A) (Phase 1 binary check — does not distinguish Full from Partial; per-family expected ranges deferred to Phase 4)
 
 A Partial Success is still a valid scientific result. It means the MACE model is less accurate for this particular material or structure type, which is itself useful information. The result is stored, reported, and included in benchmarks. It is not treated as a failure of the system — it is a characterization of the model's accuracy.
 
@@ -231,8 +231,8 @@ A Partial Success is still a valid scientific result. It means the MACE model is
 The workflow completed but with warnings that require human review before the results should be relied upon for further analysis. Examples:
 
 - Symmetry broken during relaxation (space group reduced to a subgroup, e.g., R-3m to C2/m)
-- Borderline convergence: `fmax` just above the configured threshold at the step limit
-- Bond lengths within hard bounds (> 1.0 A, < 4.0 A) but near the boundary values (e.g., min bond < 1.2 A or max M-O > 3.5 A); per-family expected ranges deferred to Phase 4
+- Borderline convergence: fmax at step limit > threshold but < 2 × threshold
+- Bond lengths within hard bounds (> 1.0 A, < 4.0 A) (Phase 1 binary check — bond lengths do not contribute to Soft Failure classification; per-family expected ranges deferred to Phase 4)
 - Evidence labeling incomplete or inconsistent in the generated report
 - Relaxation oscillating (energy not monotonically decreasing) but eventually converging
 
@@ -282,16 +282,22 @@ The following table defines the quantitative boundaries for each result category
 | Volume deviation | < 5% | 5–10% | 10–20% | > 20% or NaN | N/A |
 | Angle deviation (α, β, γ) | < 1° | 1–3° | > 3° | Structure collapsed | N/A |
 | Symmetry | Preserved | Preserved | Broken to subgroup | Indeterminate / collapsed | N/A |
-| Bond lengths (M-O) | All within 1.0–4.0 Å | All within 1.0–4.0 Å | Borderline (near 1.0 Å or near 4.0 Å) | < 1.0 Å (overlap) or > 4.0 Å | N/A |
-| Convergence | fmax < threshold within max_steps | Converged but steps > 0.8 * max_steps | Borderline: fmax just above threshold | Diverged (NaN, Inf, or collapse) | N/A |
+| Bond lengths (M-O) | Within 1.0–4.0 Å | Within 1.0–4.0 Å | — (binary check in Phase 1) | < 1.0 Å (overlap) or > 4.0 Å | N/A |
+| Convergence | fmax < threshold within max_steps | Converged but steps > 0.8 * max_steps | fmax at step limit > threshold but < 2 × threshold | fmax at step limit ≥ 2 × threshold, or energy diverged (NaN/Inf/collapse) | N/A |
 | Evidence labeling | All labels present and consistent | All labels present and consistent | Incomplete or inconsistent | Report not generated | N/A |
 | Report generation | JSON + Markdown produced | JSON + Markdown produced | Produced with warnings | Not produced | N/A |
 
 **Note on bond lengths:** Bond length classification is pass/fail in Phase 1 — Full Success and Partial Success share the same criterion (all within 1.0–4.0 Å). Per-family expected bond length ranges will be added in Phase 4.
 
+**Bond length classification note (Phase 1):** Bond lengths are a binary pass/fail gate in Phase 1. Within 1.0–4.0 Å = pass (no impact on Full/Partial/Soft classification). Below 1.0 Å or above 4.0 Å = Hard Failure. Bond lengths do not contribute to Full/Partial/Soft distinction. Per-family expected bond length ranges will replace this binary check in Phase 4.
+
+**Symmetry tolerance protocol (Phase 1):** Symmetry is checked at two tolerances: `symprec=0.1 Å` (standard) and `symprec=0.01 Å` (strict). The standard check determines the benchmark classification. The strict check is recorded as an informational diagnostic. If the standard check shows preservation but the strict check shows breaking, a warning is logged: 'Symmetry preservation is tolerance-dependent for this structure.' This warning does not affect classification but is included in the report.
+
 **Reading this table:** A run is classified by its worst column. For example, if lattice deviation is < 2% (Full Success) but angle deviation is 2° (Partial Success), the overall classification is Partial Success. Infrastructure Failure takes precedence over all scientific outcomes — if the run could not execute due to network, disk, or dependency issues, no scientific classification applies.
 
 **Relationship to WorkflowResult.status**: The `WorkflowResult.status` field reflects pipeline execution outcomes (step completion, crashes, warnings). The `BenchmarkRow.status` field is determined independently by applying the formal threshold table above to the recorded metrics. These two status values may differ — for example, a workflow may complete successfully (`WorkflowResult.status: success`) but produce lattice deviations exceeding 2%, resulting in `BenchmarkRow.status: partial_success`. The benchmark runner must apply `classify_benchmark_status(metrics)` independently of the workflow status.
+
+**Failure taxonomy cross-reference:** The failure taxonomy (retrieval_failure, convergence_failure, validation_failure, artifact_failure, unknown_failure) is defined in `architecture.md` Section 4.8.
 
 Cross-reference: `architecture.md` error handling strategy, `artifact_schema.md` ErrorRecord and WorkflowResult status enum.
 
@@ -322,7 +328,15 @@ Re-running the benchmark produces the **same result category** for each material
 - Lattice parameter deviations must agree to within 0.1% between runs (this tolerance is a starting estimate pending empirical justification during Phase 1 implementation)
 - The same space group must be reported before and after relaxation on every run
 
+**Empirical validation procedure:** During Phase 1, run LiCoO2 relaxation 5 times on the reference machine with identical configuration. Compute the standard deviation of lattice parameter deviations across runs. Set the reproducibility tolerance to `max(0.1%, 3 × observed_std_dev)`. Document the observed variance and the resulting tolerance. If `observed_std_dev > 0.033%` (i.e., 3σ exceeds 0.1%), update the tolerance with empirical justification before the Phase 1 gate review.
+
 If the reproducibility criterion fails, this indicates a non-determinism bug in the workflow or in the MACE implementation, which must be investigated before the benchmark can be considered passed.
+
+**Boundary buffer policy:** When a metric value falls within 0.2 percentage points of a classification boundary (e.g., lattice deviation between 1.8% and 2.2% near the 2% Full/Partial boundary), the material is classified at the better category but flagged as 'boundary-proximate.' Reproducibility is assessed on the flagged classification, not the raw category. If the material is consistently boundary-proximate across runs (same flag), reproducibility is satisfied even if the raw metric oscillates across the boundary.
+
+**MACE model variant (Phase 1):** All Phase 1 benchmark runs use MACE-MP-0-medium. The exact model variant, checkpoint hash, and compute device are recorded in provenance. Switching to a different MACE-MP-0 variant (small or large) constitutes a configuration change and requires a new benchmark run series.
+
+**Reference data pinning:** Benchmark reference data is pinned at the first successful retrieval. All subsequent benchmark runs for the same material use cached data from the original retrieval. Cache TTL does not apply to benchmark reference data. If reference data must be updated (e.g., Materials Project corrects a known error), a new benchmark run series is created with a version bump and the reference change is documented in the decision log.
 
 ### Evidence Labeling Criterion
 

@@ -75,7 +75,7 @@ Scientific Tools
     |-- Reference Comparator
     |-- Physics Validator
     |-- Report Generator
-    +-- [future] Voltage / Stability / Dynamics / Candidate Gen
+    +-- [PHASE 6] Voltage / Stability / Dynamics / Candidate Gen
     |
     v
 Validation Layer
@@ -90,8 +90,10 @@ Reporting Layer
 Benchmark Layer
     |
     v
-[future] Agent Orchestration Layer
+[PHASE 5 — NOT BEFORE PHASE 4 GATE] Agent Orchestration Layer
 ```
+
+> **Note:** This diagram shows logical layers and their dependency relationships, not execution order. For the actual step execution sequence, see Section 4.3 (structural_analysis workflow).
 
 Each layer depends only on the layer directly above it and the shared data models. The Workflow Engine calls Scientific Tools; it does not contain scientific logic. The Validation Layer checks outputs from Scientific Tools; it does not execute workflows. The Agent Orchestration Layer (future) wraps the Workflow Engine; it does not bypass Validation or Provenance.
 
@@ -200,7 +202,7 @@ reporting/markdown_report.py     depends on: models/*, reporting/json_report.py
 benchmark/runner.py             depends on: workflows/*, models/*, provenance/*
 benchmark/registry.py           depends on: models/*
 
-[future] agent/                 depends on: workflows/engine.py, models/*
+[PHASE 5 — NOT BEFORE PHASE 4 GATE] agent/   depends on: workflows/engine.py, models/*
                                 does NOT depend on: tools/* directly
 ```
 
@@ -240,6 +242,15 @@ NormalizedQuery:
 - Formula string input (parsed and validated as a chemical formula)
 - MP ID string input (validated as `mp-XXXXX` format)
 - Resolution of formula to MP ID via the Materials Project API
+
+**Formula disambiguation algorithm:**
+When a formula matches multiple MP entries:
+1. Query MP for all entries matching the reduced formula.
+2. Filter to entries with `is_stable == true`.
+3. If exactly one stable entry remains, use it.
+4. If multiple stable entries remain, select the one with lowest `energy_above_hull`.
+5. If still ambiguous (tie in `energy_above_hull`), raise `InputError("ambiguous_input")` with the list of candidate MP IDs.
+6. Log the selection rationale (number of candidates, filtering criteria, chosen entry) in provenance.
 
 **Deferred:**
 - Structure file input (CIF, POSCAR, XYZ)
@@ -303,6 +314,25 @@ otherwise → other
 ```
 
 These rules are implemented in a `classify_family(space_group, formula)` function. The `other` category is a catch-all for materials outside the three benchmark families.
+
+**Factory function:**
+
+```
+create_canonical_material(query: NormalizedQuery, mp_response: ToolResult) -> CanonicalMaterial
+```
+
+This factory is the sole construction point for `CanonicalMaterial`. It is defined in `models/material.py` and called by the workflow adapter between step 1 (fetch) and step 2 (normalize). Field mapping:
+- `material_id` <- `uuid4()`
+- `formula` <- `query.formula`
+- `reduced_formula` <- `query.reduced_formula`
+- `family` <- `classify_family(mp_response.data.structure.space_group, query.formula)`
+- `structure` <- `mp_response.data.structure`
+- `source` <- `"materials_project"`
+- `mp_id` <- `query.mp_id`
+- `benchmark_tags` <- derived from family and benchmark material registry
+- `workflow_eligibility` <- `{"structural_analysis": true}` (MVP default)
+- `created_at` <- current ISO 8601 timestamp
+- `provenance` <- constructed from mp_response.provenance and query metadata
 
 **Extension points:** Family classification is implemented as a registry of classifier functions. Each classifier takes a pymatgen Structure and returns a family label or `None`. Adding a new family requires registering one classifier function. Workflow eligibility is similarly extensible: each new workflow registers its eligibility criteria.
 
@@ -398,6 +428,8 @@ class WorkflowContext:  # read-only from tools; only engine appends to step_resu
   workflow_run_id: string                # UUID for this run
   started_at: string                     # ISO 8601
 ```
+
+**Construction note:** The engine creates the `WorkflowContext` before step 0 with `normalized_query` set to `None`. Step 0 (`resolve_input`) produces the `NormalizedQuery` in its `StepResult`. The engine updates `context.normalized_query` after step 0 completes, before passing the context to step 1. This means step 0's adapter function does not read `context.normalized_query` (it is `None` at that point); all subsequent steps can safely read it.
 
 The `WorkflowContext` is a typed container — not a free-form dictionary. Each step reads prior results from `step_results` by step name (e.g., `context.step_results["fetch_structure"]`) and the engine appends new results after each step completes. The context is read-only from the perspective of tools; only the engine mutates it.
 
@@ -621,7 +653,7 @@ ToolResult{
       reference_mean: float,         # mean bond length in reference structure (Angstrom)
       deviation_pct: float           # percentage deviation
     }],
-    coordination_comparison: list[{
+    coordination_comparison: list[{  # deferred to Phase 4
       site: string,                  # e.g., "Li", "Co"
       relaxed_cn: float,             # coordination number in relaxed structure
       reference_cn: float,           # coordination number in reference structure
@@ -642,9 +674,9 @@ ToolResult{
 - `ComputationError("neighbor_detection_failed")` -- bond length analysis failed due to empty neighbor lists (cutoff too small or structure severely distorted)
 - `ValidationError("threshold_exceeded")` -- one or more deviations exceed the configured tolerance (recorded as a warning, not a fatal error -- the comparison still completes)
 
-**MVP scope:** Lattice parameter deviation, volume deviation, aggregate bond length sanity check (mean M-O bond length comparison, not per-pair), coordination number comparison, space group preservation check. Per-pair bond length comparison (mapping individual bonds between relaxed and reference structures) is deferred to Phase 4.
+**MVP scope:** Lattice parameter deviation, volume deviation, aggregate bond length sanity check (mean M-O bond length comparison, not per-pair), space group preservation check. Coordination number comparison deferred to Phase 4. Per-pair bond length comparison (mapping individual bonds between relaxed and reference structures) is deferred to Phase 4.
 
-**Deferred:** Per-pair bond length comparison, atom-by-atom displacement analysis (mapping relaxed sites to reference sites), Rietveld-style profile comparison, angular distribution function comparison, detailed Wyckoff site analysis.
+**Deferred:** Coordination number comparison (deferred from MVP; no benchmark metric evaluates it), per-pair bond length comparison, atom-by-atom displacement analysis (mapping relaxed sites to reference sites), Rietveld-style profile comparison, angular distribution function comparison, detailed Wyckoff site analysis.
 
 **Extension points:** Comparison metrics are implemented as a list of `ComparisonMetric` objects. Each metric has a `compute(relaxed, reference) -> MetricResult` method. Adding a new comparison metric (e.g., radial distribution function comparison) requires writing one metric class and registering it.
 
@@ -725,7 +757,7 @@ Cross-reference: `scientific_validity_matrix.md` for evidence level definitions 
 ```
 ToolResult{
   status: "success",
-  evidence_type: "metadata",
+  evidence_type: null,  # report generation is rendering, not scientific computation; no evidence label applies
   data: {
     report_json: ReportRecord,       # full structured report (see artifact_schema.md)
     report_markdown: string,         # rendered Markdown report text
@@ -753,29 +785,14 @@ Cross-reference: `artifact_schema.md` Section 2.4 (ReportRecord), `scientific_va
 
 ---
 
-#### 4.4.7 Future Tools (Interface Contracts Only)
+#### 4.4.7 Future Tools (Phase 5--6)
 
-These tools are NOT implemented in the MVP. Their interface contracts are defined here to ensure the architecture can accommodate them without modification.
+These tools are NOT implemented in the MVP. Detailed interface contracts will be specified during Phase 5--6 planning, based on the stable Phase 4 ToolResult contract.
 
-**voltage_workflow (Phase 6, Level B):**
-- Input: lithiated structure, delithiated structure, MACE model config
-- Output: `ToolResult{data: {average_voltage: float, energy_lithiated: float, energy_delithiated: float, caveats: list[string]}}`
-- Evidence type: `"B-restricted"`
-
-**stability_workflow (Phase 6, Level C):**
-- Input: CanonicalMaterial, MP phase diagram data
-- Output: `ToolResult{data: {energy_above_hull: float, competing_phases: list, stability_label: string}}`
-- Evidence type: `"C-proxy"`
-
-**dynamics_workflow (Phase 6, Level C):**
-- Input: relaxed structure, phonon config
-- Output: `ToolResult{data: {gamma_point_frequencies: list[float], imaginary_modes: integer, dynamical_stability_label: string}}`
-- Evidence type: `"C-proxy"`
-
-**candidate_generation_workflow (Phase 6, Level C):**
-- Input: family constraints, composition constraints, property targets
-- Output: `ToolResult{data: {candidates: list[CanonicalMaterial], generation_method: string, screening_results: list}}`
-- Evidence type: `"C-proxy"`
+- **voltage_workflow** (Phase 6): Computes energy difference between lithiated and delithiated structures; evidence Level B.
+- **stability_workflow** (Phase 6): Estimates thermodynamic stability relative to competing phases using MP phase diagram data; evidence Level C.
+- **dynamics_workflow** (Phase 6): Computes gamma-point phonon frequencies as a proxy for dynamical stability; evidence Level C.
+- **candidate_generation_workflow** (Phase 6): Generates candidate materials matching family and composition constraints; evidence Level C.
 
 ---
 
@@ -894,7 +911,7 @@ Cross-reference: `artifact_schema.md` for complete schema definitions, directory
 
 **Evidence label format in reports:** Every section header includes the evidence level in brackets (e.g., `[Level A -- computed]`). Every quantitative result includes its evidence type inline. The format follows the specification in `scientific_validity_matrix.md` Section 5.
 
-**Note:** Report generation is a post-workflow assembly step, not a scientific computation step. It does not produce a `StepResult` file under `steps/`; the report artifacts (`report.json` and `report.md`) are written directly to the `reports/` directory. The report generator's `ToolResult` is used internally by the engine but is not persisted as a numbered step file.
+**Note:** Report generation is a post-workflow assembly step, not a scientific computation step. It does not produce a `StepResult` file under `steps/`; the report artifacts (`report.json` and `report.md`) are written directly to the `reports/` directory. The report generator's `ToolResult` is used internally by the engine but is not persisted as a numbered step file. The step count in `WorkflowResult.steps` (7) exceeds the number of step files in the `steps/` directory (6). This is by design -- step 6 artifacts are stored under `reports/`, not `steps/`. The post-run integrity check must account for this difference.
 
 Cross-reference: `artifact_schema.md` Section 2.4 (ReportRecord and ReportSection), `scientific_validity_matrix.md` Section 5 (evidence label formatting requirements).
 
@@ -1137,7 +1154,8 @@ Cross-reference: `artifact_schema.md` Section 2.3 (ToolResult record).
 - The benchmark runner only executes workflows tagged `"benchmark"`. It never runs exploration workflows, even accidentally.
 - Evidence labels for exploration workflows are capped at Level B (if the methodology has been benchmarked for the relevant property) or Level C (for novel methodologies).
 - A workflow cannot be tagged as both `"benchmark"` and `"exploration"`. This is enforced at registration time.
-- When the Agent Layer (Phase 5) is added, it must respect family boundaries: an agent cannot promote an exploration result to Level A trust.
+
+**Phase 5 note:** When the Agent Layer is added, it must also respect family boundaries: an agent cannot promote an exploration result to Level A trust.
 
 ---
 

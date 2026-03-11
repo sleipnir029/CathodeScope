@@ -50,6 +50,8 @@ Outputs produced by benchmarked MVP workflows or retrieved from established refe
 - **A-computed**: Data computed by a benchmarked CathodeScope workflow (e.g., MACE-relaxed structure)
 - **A-compared**: Data produced by comparing computed results against references (e.g., lattice parameter deviation)
 
+In Phase 1, 'benchmarked' refers to comparison against 3 known cathode materials (LiCoO2, LiFePO4, LiMn2O4). The benchmark scope must be stated in every report that uses Level A labels.
+
 ### Level B — Restricted Estimates
 
 Outputs from workflows that produce quantitative estimates with known limitations. These must always include caveats and should be framed as screening estimates, never as definitive results.
@@ -483,9 +485,10 @@ Structure relaxed using MACE-MP-0 (v0.3.6).
 - Space group R-3m preserved (symmetry tolerance 0.1 Angstrom)
 - All M-O bond lengths within expected range (1.9-2.1 Angstrom)
 
-**Assessment**: Structural analysis consistent within benchmark
-thresholds (benchmarked against 3 known cathode materials: LiCoO2,
+**Assessment**: All lattice parameter deviations are within the defined 2% threshold, and volume deviation is within the 5% threshold (benchmarked against 3 known cathode materials: LiCoO2,
 LiFePO4, LiMn2O4). All evidence labels are Level A.
+
+> **Methodology caveat (mandatory in all reports):** All deviations are computed between MACE-MP-0 relaxed structures and Materials Project PBE+U reference calculations. The PBE+U reference itself deviates from experimental values by approximately 1–3% for lattice parameters. Deviations reported here reflect inter-method consistency, not absolute accuracy relative to experiment.
 ```
 
 ### Key Formatting Requirements
@@ -496,6 +499,7 @@ LiFePO4, LiMn2O4). All evidence labels are Level A.
 4. **Convergence details** must appear for every relaxation (steps, final fmax, whether convergence was achieved)
 5. **Deviations** must be reported as percentages with the reference explicitly named
 6. **The assessment paragraph** must summarize the evidence levels present and whether thresholds were met
+7. Every report must include a methodology caveat stating that comparisons are between two computational methods and that the MP reference deviates 1–3% from experimental values
 
 ### Example: Mixed Evidence Levels
 

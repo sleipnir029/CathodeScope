@@ -16,6 +16,23 @@
 
 Cross-reference: `architecture.md` extension-first design rules.
 
+### Units Convention
+
+All numeric values in CathodeScope artifacts follow these project-wide conventions:
+
+| Quantity | Unit | Symbol |
+|----------|------|--------|
+| Energy | electronvolt | eV |
+| Force | electronvolt per Angstrom | eV/Å |
+| Length | Angstrom | Å |
+| Angle | degree | ° |
+| Volume | cubic Angstrom | Å³ |
+| Deviation | percent | % (unless stated otherwise) |
+| Time | seconds | s |
+| Temperature | Kelvin | K |
+
+These conventions apply to all JSON artifacts, reports, and internal data structures. Changing a unit convention requires a MAJOR schema version bump (e.g., 1.x.x → 2.0.0) and migration of all existing artifacts.
+
 ---
 
 ## 2. Core Data Records
@@ -104,7 +121,7 @@ StepResult:
   step_name: string                # e.g., "fetch_structure", "relax_structure", "compare_reference"
   step_index: integer              # 0-based position in workflow
   status: string                   # enum: "success" | "warning" | "failed" | "skipped"
-  evidence_type: string            # from validity ladder: "A-retrieved" | "A-computed" | "A-compared" | "B-restricted" | "C-proxy"
+  evidence_type: string | null     # from validity ladder: "A-retrieved" | "A-computed" | "A-compared" | "B-restricted" | "C-proxy" | null (for non-scientific steps like input resolution and report generation)
   data: object                     # step-specific output data (structure depends on step type)
   warnings: list[string]           # human-readable warning messages
   error: ErrorRecord | null        # null if no error
@@ -166,6 +183,7 @@ ToolResult:
 - The `data` field is tool-specific but always a JSON object. Its schema is documented per-tool.
 - The `evidence_type` field is mandatory and must be drawn from the validity ladder defined in `scientific_validity_matrix.md`.
 - If `status` is `"error"`, the `data` field may be empty or partial, but `warnings` must contain at least one entry describing the failure.
+- When reporting lattice parameter deviations, all values correspond to the conventional cell. The `cell_convention` field (`"primitive"` or `"conventional"`) is included in comparator output to confirm the cell type used.
 
 Cross-reference: `architecture.md` extension-first rules, `scientific_validity_matrix.md` evidence types.
 
@@ -299,9 +317,9 @@ BenchmarkRow:
 
 - `formula` and `family` are denormalized (duplicated from `CanonicalMaterial`) to make benchmark tables self-contained and readable without joins.
 - The `metrics` object schema varies by workflow type. The metric keys are defined in `benchmark_spec.md` for each workflow.
-- `failure_category` is drawn from the benchmark failure taxonomy (e.g., `"retrieval_failure"`, `"convergence_failure"`, `"validation_failure"`). It is `null` when `status` is `"success"`.
+- `failure_category` is drawn from the failure taxonomy defined in `architecture.md` Section 4.8: `retrieval_failure`, `convergence_failure`, `validation_failure`, `artifact_failure`, `unknown_failure`. It is `null` when `status` is `"success"`.
 
-Cross-reference: `benchmark_spec.md` for metric definitions and failure categories.
+Cross-reference: `architecture.md` Section 4.8 for failure taxonomy, `benchmark_spec.md` for metric definitions.
 
 ---
 
