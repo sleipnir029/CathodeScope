@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-07 Done)
+**Last Updated**: 2026-03-11 (T-09 Done)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -286,14 +286,15 @@
 | **Why it exists** | Normalization converts retrieved structures to conventional standard cells. Required before relaxation for consistent comparisons. |
 | **Dependencies** | T-02, T-07 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/tools/structure_normalizer.py`, `tests/unit/test_tools/test_structure_normalizer.py`, `tests/fixtures/structures/licoo2_conventional.json`, `tests/fixtures/structures/lifepo4_conventional.json`, `tests/fixtures/structures/limn2o4_conventional.json` |
 | **Tests required** | 14 tests: space group preservation (3 materials), conventional cell, atom counts, tool result format, evidence type, data fields, degenerate structure handling |
 | **Acceptance criteria** | All 14 tests pass. LiCoO2: R-3m, 12 atoms. LiFePO4: Pnma, 28 atoms. LiMn2O4: Fd-3m, 56 atoms. |
 | **Scientific review** | **Yes** — Space group preservation review. Verify against `scientific_validity_matrix.md` Row 2. |
-| **Notes** | Do not import from other tools. Do not mock pymatgen — use real structures from fixtures. |
+| **Completed** | 2026-03-11 |
+| **Notes** | `normalize(structure_dict, mp_id, formula) -> ToolResult` wraps SpacegroupAnalyzer. evidence_type="A-computed". Fixture inputs updated to proper crystallographic structures generated via pymatgen from_spacegroup() (LiCoO2: hexagonal R-3m 12 atoms, LiFePO4: Pnma 28 atoms, LiMn2O4: Fd-3m 56 atoms). Conventional structure fixtures saved to tests/fixtures/structures/. mp_responses fixtures updated to replace approximate structures. 14/14 tests pass, 93/93 total pass. ruff + mypy clean. Scientific wording: evidence_type="A-computed" per validity matrix Row 2. |
 
 ---
 
