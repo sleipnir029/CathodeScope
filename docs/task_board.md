@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-01 Done)
+**Last Updated**: 2026-03-11 (T-02 Done)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -103,14 +103,15 @@
 | **Why it exists** | `ToolResult` is the universal return type for all tools. `ErrorRecord` is used by every failure path. All must exist before any tool is built. |
 | **Dependencies** | T-01 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/models/results.py`, `tests/unit/test_models/test_results.py` |
 | **Tests required** | 23 tests: ErrorRecord (5), ToolResult (9), StepResult (4), WorkflowResult (5) |
 | **Acceptance criteria** | All 23 tests pass. Invalid enum values rejected. Full JSON round-trip for every model. |
 | **Scientific review** | No |
-| **Notes** | Use `Literal` types for enums (pydantic v2 pattern). Do not import from `cathodescope.tools` or `cathodescope.config`. |
+| **Completed** | 2026-03-11 |
+| **Notes** | ErrorRecord: 6 Literal error_types, details/source/traceback optional. ToolResult: status Literal["success","failure","partial"], embeds ProvenanceRecord, evidence_type str\|None for validity-matrix labels. StepResult: embeds ToolResult + timing. WorkflowResult: embeds list[StepResult] + top-level ProvenanceRecord, workflow_run_id auto UUID. All Literal enums via pydantic v2. No imports from tools/config. ruff + mypy --strict clean. |
 
 ---
 
