@@ -1,0 +1,24 @@
+{
+  "relaxation": {
+    "fmax": 0.005,
+    "max_steps": 1000,
+    "optimizer": "BFGS"
+  },
+  "comparison": {
+    "lattice_tolerance": 1.0,
+    "volume_tolerance": 2.0
+  },
+  "validation": {
+    "min_bond": 1.2,
+    "max_bond": 3.5
+  },
+  "report": {
+    "indent": 2
+  },
+  "cache": {
+    "cache_dir": "artifacts/cache/mp"
+  },
+  "benchmark": {
+    "materials": ["mp-22526", "mp-19017", "mp-18767"]
+  }
+}

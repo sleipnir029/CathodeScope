@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-02 Done)
+**Last Updated**: 2026-03-11 (T-05 Done)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -170,14 +170,15 @@
 | **Why it exists** | Every tool needs configuration values (fmax thresholds, tolerances, API keys). Defaults must exist before any tool is written. |
 | **Dependencies** | T-01 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/config/defaults.py`, `cathodescope/config/settings.py`, `tests/unit/test_config/test_defaults.py`, `tests/unit/test_config/test_settings.py`, `tests/fixtures/configs/default_config.json`, `tests/fixtures/configs/strict_config.json` |
 | **Tests required** | 17 tests: defaults (8), settings (9) |
 | **Acceptance criteria** | All 17 tests pass. Settings load defaults when no config file. JSON overrides merge. Missing MP_API_KEY raises clear error. |
 | **Scientific review** | No |
-| **Notes** | Default values: fmax=0.01 eV/A, max_steps=500, lattice_tolerance=2.0%, volume_tolerance=5.0%, min_bond=1.0 A, max_bond=4.0 A. MP_API_KEY from env var, never hardcoded. |
+| **Completed** | 2026-03-11 |
+| **Notes** | Default values: fmax=0.01 eV/Å, max_steps=500, lattice_tolerance=2.0%, volume_tolerance=5.0%, min_bond=1.0 Å, max_bond=4.0 Å. MP_API_KEY from env var via CathodescopeSettings.load(). pydantic gt/ge constraints enforce validity. 6 sub-config models + CathodescopeSettings. strict_config.json fixture has fmax=0.005, lattice_tol=1.0%, vol_tol=2.0%. |
 
 ---
 
@@ -803,12 +804,12 @@
 
 | Task | Epic | Title | Size | Priority | Phase | Status | Critical Path | Sci Review |
 |------|------|-------|------|----------|-------|--------|---------------|------------|
-| T-00 | E-01 | Project Scaffolding | S | P0 | 1 | Todo | Yes | No |
-| T-01 | E-02 | ProvenanceRecord Model | S | P0 | 1 | Todo | Yes | No |
-| T-02 | E-02 | ErrorRecord, ToolResult, StepResult, WorkflowResult | M | P0 | 1 | Todo | Yes | No |
+| T-00 | E-01 | Project Scaffolding | S | P0 | 1 | Done | Yes | No |
+| T-01 | E-02 | ProvenanceRecord Model | S | P0 | 1 | Done | Yes | No |
+| T-02 | E-02 | ErrorRecord, ToolResult, StepResult, WorkflowResult | M | P0 | 1 | Done | Yes | No |
 | T-03 | E-02 | CanonicalMaterial, NormalizedQuery | M | P1 | 1 | Todo | No | No |
 | T-04 | E-02 | ReportRecord, BenchmarkRow, BenchmarkSummary | S | P1 | 1 | Todo | No | No |
-| T-05 | E-03 | Configuration System | M | P0 | 1 | Todo | Yes | No |
+| T-05 | E-03 | Configuration System | M | P0 | 1 | Done | Yes | No |
 | T-06 | E-06 | Artifact / Provenance Store | M | P1 | 1 | Todo | No | No |
 | T-07 | E-04 | MP Client and Fixture Capture | M | P0 | 1 | Todo | Yes | No |
 | T-08 | E-04 | Input Resolver | S | P1 | 1 | Todo | No | No |
