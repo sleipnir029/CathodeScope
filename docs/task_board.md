@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-08b Done; 12/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-08 Done; 13/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -244,14 +244,15 @@
 | **Why it exists** | The resolver is Step 0 of every workflow. It converts raw user input to a validated `NormalizedQuery`. |
 | **Dependencies** | T-03, T-07 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
+| **Completed** | 2026-03-12 |
 | **Files affected** | `cathodescope/tools/input_resolver.py`, `tests/unit/test_tools/test_input_resolver.py` |
 | **Tests required** | 12 tests: formula resolution, mp-id resolution, invalid inputs, raw input preservation, source type detection, reduced formula population |
 | **Acceptance criteria** | All 12 tests pass. "LiCoO2" and "mp-22526" resolve correctly. Invalid inputs produce `InputError` with clear messages. |
 | **Scientific review** | No |
-| **Notes** | Mock MP client in unit tests. Detect mp-id via regex `mp-\d+`. Use pymatgen `Composition` for formula validation. |
+| **Notes** | `resolve(raw_input, mp_client)` takes a duck-typed `_MPClientProtocol` (no runtime import from `mp_client.py` — architecture rule respected). Detects mp-id via `^mp-\d+$`; rejects `mp-<non-digits>` with InputError; validates formulas via `pymatgen.Composition`. For formula input: calls `fetch_by_formula` to populate `mp_id`. For mp-id input: calls `fetch_by_mp_id` to populate `formula`/`reduced_formula`. Returns `ToolResult` with `NormalizedQuery.model_dump(mode="json")` in `data`, `evidence_type="A-retrieved"`. 12/12 tests pass; ruff + mypy clean; 194/194 total suite passes. |
 
 ---
 
