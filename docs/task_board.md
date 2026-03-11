@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-13 Done; 10/32 tasks complete)
+**Last Updated**: 2026-03-11 (T-03 Done; 11/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -126,14 +126,15 @@
 | **Why it exists** | Every tool and workflow depends on `CanonicalMaterial`. The `NormalizedQuery` is the first object in any pipeline run. Without these, no pipeline step can be written. |
 | **Dependencies** | T-01 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
+| **Completed** | 2026-03-11 |
 | **Files affected** | `cathodescope/models/material.py`, `tests/unit/test_models/test_material.py` |
 | **Tests required** | 16 tests: NormalizedQuery (6), CanonicalMaterial (10) |
 | **Acceptance criteria** | All 16 tests pass. Invalid family/source values rejected. Pymatgen `as_dict()` structures round-trip through the model. |
 | **Scientific review** | No |
-| **Notes** | Store `structure` as `dict` with validator checking for `lattice` and `sites` keys. Do not create factory functions depending on MP client. **⚠️ Sequence drift**: planned for Wave 1 position 5 but was skipped when T-07 and T-09 were implemented first. Must be completed before T-08b, T-08, and T-22 can start. |
+| **Notes** | `NormalizedQuery(formula, reduced_formula, mp_id, source_type, raw_input, timestamp)` — rejects empty/whitespace strings. `CanonicalMaterial(schema_version="1.0.0", material_id=uuid4-str, formula, reduced_formula, family, structure, source, mp_id, identifiers, benchmark_tags, workflow_eligibility, created_at, provenance)` — structure validator enforces lattice+sites keys; workflow_eligibility defaults to {"structural_analysis": True}. 16/16 tests pass; ruff + mypy --strict clean; 177/177 total suite passes. Sequence drift resolved — T-08b, T-08, T-22 now unblocked. |
 
 ---
 
