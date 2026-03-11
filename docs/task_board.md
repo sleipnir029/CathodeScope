@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-05 Done)
+**Last Updated**: 2026-03-11 (T-07 Done)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -219,14 +219,15 @@
 | **Why it exists** | The MP client is the first external dependency. All downstream tools need a structure to work with. Fixture capture ensures offline development. |
 | **Dependencies** | T-02, T-05 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/tools/mp_client.py`, `tests/unit/test_tools/test_mp_client.py`, `tests/fixtures/mp_responses/mp-22526.json`, `tests/fixtures/mp_responses/mp-19017.json`, `tests/fixtures/mp_responses/mp-18767.json`, `scripts/capture_fixtures.py` |
 | **Tests required** | 16 tests: fetch by mp_id, fetch by formula, error handling (not found, timeout, rate limit), caching, provenance, fixture validation |
 | **Acceptance criteria** | All 16 tests pass. Fixture files contain valid pymatgen `Structure.as_dict()` data. Cache hit returns same data as fresh fetch. Unit tests never hit live API. |
 | **Scientific review** | No |
-| **Notes** | Return `ToolResult` with `evidence_type: "A-retrieved"`. Metadata must include mp_id, formula, space_group, energy_per_atom, formation_energy_per_atom, band_gap. |
+| **Completed** | 2026-03-11 |
+| **Notes** | 22 tests implemented (fixture tests parameterized across 3 materials). `CathodescopeMPClient(api_key, cache_dir)` wraps MPRester with disk cache (SHA-256 filename keys). Returns `ToolResult` with `evidence_type="A-retrieved"`. Failure cases: not-found → InputError, TimeoutError → NetworkError, other → UnknownError. `mp_api` has no stubs; suppressed via `# type: ignore[import-untyped]`. Fixture JSONs use representative structures (run `scripts/capture_fixtures.py` with live API key to refresh). |
 
 ---
 
@@ -811,7 +812,7 @@
 | T-04 | E-02 | ReportRecord, BenchmarkRow, BenchmarkSummary | S | P1 | 1 | Todo | No | No |
 | T-05 | E-03 | Configuration System | M | P0 | 1 | Done | Yes | No |
 | T-06 | E-06 | Artifact / Provenance Store | M | P1 | 1 | Todo | No | No |
-| T-07 | E-04 | MP Client and Fixture Capture | M | P0 | 1 | Todo | Yes | No |
+| T-07 | E-04 | MP Client and Fixture Capture | M | P0 | 1 | Done | Yes | No |
 | T-08 | E-04 | Input Resolver | S | P1 | 1 | Todo | No | No |
 | T-08b | E-04 | Family Classification Function | XS | P1 | 1 | Todo | No | No |
 | T-09 | E-04 | Structure Normalizer | M | P0 | 1 | Todo | Yes | **Yes** |

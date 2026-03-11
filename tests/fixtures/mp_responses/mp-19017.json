@@ -1,0 +1,123 @@
+{
+  "mp_id": "mp-19017",
+  "formula": "LiFePO4",
+  "space_group": "Pnma",
+  "space_group_number": 62,
+  "energy_per_atom": -5.6342,
+  "formation_energy_per_atom": -2.8421,
+  "band_gap": 3.703,
+  "structure": {
+    "@module": "pymatgen.core.structure",
+    "@class": "Structure",
+    "charge": 0,
+    "lattice": {
+      "matrix": [
+        [10.4149, 0.0, 0.0],
+        [0.0, 6.0643, 0.0],
+        [0.0, 0.0, 4.7389]
+      ],
+      "pbc": [true, true, true],
+      "a": 10.4149,
+      "b": 6.0643,
+      "c": 4.7389,
+      "alpha": 90.0,
+      "beta": 90.0,
+      "gamma": 90.0,
+      "volume": 299.375
+    },
+    "sites": [
+      {
+        "species": [{"element": "Li", "occu": 1.0}],
+        "abc": [0.0, 0.0, 0.0],
+        "xyz": [0.0, 0.0, 0.0],
+        "label": "Li",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "Li", "occu": 1.0}],
+        "abc": [0.5, 0.5, 0.0],
+        "xyz": [5.2075, 3.0322, 0.0],
+        "label": "Li",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "Li", "occu": 1.0}],
+        "abc": [0.0, 0.5, 0.5],
+        "xyz": [0.0, 3.0322, 2.3695],
+        "label": "Li",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "Li", "occu": 1.0}],
+        "abc": [0.5, 0.0, 0.5],
+        "xyz": [5.2075, 0.0, 2.3695],
+        "label": "Li",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "Fe", "occu": 1.0}],
+        "abc": [0.2822, 0.25, 0.9709],
+        "xyz": [2.9391, 1.5161, 4.601],
+        "label": "Fe",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "Fe", "occu": 1.0}],
+        "abc": [0.7178, 0.75, 0.9709],
+        "xyz": [7.4758, 4.5482, 4.601],
+        "label": "Fe",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "Fe", "occu": 1.0}],
+        "abc": [0.2178, 0.75, 0.4709],
+        "xyz": [2.2683, 4.5482, 2.2315],
+        "label": "Fe",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "Fe", "occu": 1.0}],
+        "abc": [0.7822, 0.25, 0.4709],
+        "xyz": [8.1466, 1.5161, 2.2315],
+        "label": "Fe",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "P", "occu": 1.0}],
+        "abc": [0.0945, 0.25, 0.4182],
+        "xyz": [0.9842, 1.5161, 1.9818],
+        "label": "P",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "P", "occu": 1.0}],
+        "abc": [0.9055, 0.75, 0.4182],
+        "xyz": [9.4307, 4.5482, 1.9818],
+        "label": "P",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "P", "occu": 1.0}],
+        "abc": [0.5945, 0.75, 0.9182],
+        "xyz": [6.1924, 4.5482, 4.3513],
+        "label": "P",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "P", "occu": 1.0}],
+        "abc": [0.4055, 0.25, 0.9182],
+        "xyz": [4.2225, 1.5161, 4.3513],
+        "label": "P",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "O", "occu": 1.0}],
+        "abc": [0.0, 0.0, 0.0],
+        "xyz": [0.0, 0.0, 0.0],
+        "label": "O",
+        "properties": {}
+      }
+    ],
+    "properties": {}
+  }
+}

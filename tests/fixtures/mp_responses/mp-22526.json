@@ -1,0 +1,60 @@
+{
+  "mp_id": "mp-22526",
+  "formula": "LiCoO2",
+  "space_group": "R-3m",
+  "space_group_number": 166,
+  "energy_per_atom": -6.7894,
+  "formation_energy_per_atom": -2.1207,
+  "band_gap": 1.458,
+  "structure": {
+    "@module": "pymatgen.core.structure",
+    "@class": "Structure",
+    "charge": 0,
+    "lattice": {
+      "matrix": [
+        [2.8158, 0.0, 1.6253],
+        [-1.4079, 2.4384, 1.6253],
+        [0.0, 0.0, 4.8759]
+      ],
+      "pbc": [true, true, true],
+      "a": 2.8158,
+      "b": 2.8158,
+      "c": 14.0513,
+      "alpha": 33.5575,
+      "beta": 33.5575,
+      "gamma": 33.5575,
+      "volume": 33.494
+    },
+    "sites": [
+      {
+        "species": [{"element": "Li", "occu": 1.0}],
+        "abc": [0.0, 0.0, 0.0],
+        "xyz": [0.0, 0.0, 0.0],
+        "label": "Li",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "Co", "occu": 1.0}],
+        "abc": [0.5, 0.5, 0.5],
+        "xyz": [0.7040, 1.2192, 4.0634],
+        "label": "Co",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "O", "occu": 1.0}],
+        "abc": [0.2398, 0.2398, 0.2398],
+        "xyz": [0.3382, 0.5851, 2.3224],
+        "label": "O",
+        "properties": {}
+      },
+      {
+        "species": [{"element": "O", "occu": 1.0}],
+        "abc": [0.7602, 0.7602, 0.7602],
+        "xyz": [1.0696, 1.8533, 5.8044],
+        "label": "O",
+        "properties": {}
+      }
+    ],
+    "properties": {}
+  }
+}
