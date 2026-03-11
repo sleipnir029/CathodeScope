@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-04 Done; 9/32 tasks complete)
+**Last Updated**: 2026-03-11 (T-13 Done; 10/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -377,14 +377,15 @@
 | **Why it exists** | Evidence labels are mandatory on all outputs. The assigner ensures labels are deterministic and consistent with `scientific_validity_matrix.md`. |
 | **Dependencies** | T-02 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
+| **Completed** | 2026-03-11 |
 | **Files affected** | `cathodescope/validation/evidence.py`, `tests/unit/test_validation/test_evidence.py` |
 | **Tests required** | 14 tests: label assignment per step, summary inheritance (all-A, mixed A+B, any-C), label dict structure, non-benchmarked family downgrade |
 | **Acceptance criteria** | All 14 tests pass. Label assignment deterministic. Summary inheritance follows weakest-level rule. Non-benchmarked families receive B-restricted for relaxation. |
 | **Scientific review** | **Yes** — Evidence label audit (SC-03). Verify all 8 MVP labels match `scientific_validity_matrix.md` Section 3 Part A. |
-| **Notes** | Step-to-label mapping: fetch→A-retrieved, normalize→A-computed, relax→A-computed (if benchmarked family), compare→A-compared, validate→A-compared. |
+| **Notes** | 14/14 tests pass; ruff + mypy clean; 161/161 total suite passes. `assign_evidence_label(output_name, step_name, material_family, is_benchmarked_family) -> dict` returns `{output_name, evidence_type, rationale}`. `assign_evidence_labels(step_assignments, ...) -> list[dict]` convenience wrapper. `compute_summary_evidence_level(labels) -> str` returns "A"/"B"/"C" (weakest-level rule). Conditional trust: relax step → A-computed for benchmarked families (layered_oxide, olivine_polyanion, spinel); B-restricted otherwise. **SC-03 PASSED**: all 8 MVP evidence labels match scientific_validity_matrix.md Section 3 Part A rows 1–8. |
 
 ---
 
