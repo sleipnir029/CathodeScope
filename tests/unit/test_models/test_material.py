@@ -293,3 +293,56 @@ def test_canonical_material_structure_field_accepts_pymatgen_dict() -> None:
 
     assert "lattice" in material.structure
     assert "sites" in material.structure
+
+
+# ---------------------------------------------------------------------------
+# classify_family tests (T-08b)
+# ---------------------------------------------------------------------------
+
+
+def test_classify_family_layered_oxide_r3m_limio2() -> None:
+    """classify_family returns 'layered_oxide' for R-3m + LiCoO2."""
+    from cathodescope.models.material import classify_family
+
+    result = classify_family("R-3m", "LiCoO2")
+
+    assert result == "layered_oxide"
+
+
+def test_classify_family_olivine_pnma_limpo4() -> None:
+    """classify_family returns 'olivine_polyanion' for Pnma + LiFePO4."""
+    from cathodescope.models.material import classify_family
+
+    result = classify_family("Pnma", "LiFePO4")
+
+    assert result == "olivine_polyanion"
+
+
+def test_classify_family_spinel_fd3m_lim2o4() -> None:
+    """classify_family returns 'spinel' for Fd-3m + LiMn2O4."""
+    from cathodescope.models.material import classify_family
+
+    result = classify_family("Fd-3m", "LiMn2O4")
+
+    assert result == "spinel"
+
+
+def test_classify_family_unknown_returns_other() -> None:
+    """classify_family returns 'other' for an unrecognised space group / formula."""
+    from cathodescope.models.material import classify_family
+
+    assert classify_family("P1", "LiCoO2") == "other"
+    assert classify_family("R-3m", "NaCoO2") == "other"
+    assert classify_family("Pnma", "LiCoO2") == "other"
+
+
+def test_classify_family_case_insensitive() -> None:
+    """classify_family treats space-group strings case-insensitively."""
+    from cathodescope.models.material import classify_family
+
+    assert classify_family("r-3m", "LiCoO2") == "layered_oxide"
+    assert classify_family("R-3M", "LiCoO2") == "layered_oxide"
+    assert classify_family("pnma", "LiFePO4") == "olivine_polyanion"
+    assert classify_family("PNMA", "LiFePO4") == "olivine_polyanion"
+    assert classify_family("fd-3m", "LiMn2O4") == "spinel"
+    assert classify_family("FD-3M", "LiMn2O4") == "spinel"

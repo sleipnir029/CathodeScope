@@ -1,7 +1,7 @@
 # CathodeScope — Task Sequence Summary
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (Gate 1 passed; sequence drift noted)
+**Last Updated**: 2026-03-12 (Board review: 11/32 Done; sequence drift resolved; next-10 refreshed)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (task definitions), `task_board.md` (task statuses), `task_execution_rules.md` (selection algorithm)
 
@@ -237,7 +237,9 @@ Several tasks can be worked in parallel when their prerequisites are met:
 
 ---
 
-## Current Execution State (reviewed 2026-03-11)
+## Current Execution State (reviewed 2026-03-12)
+
+**11/32 tasks Done. 177 tests passing. Gate 1 PASSED. Gate 2 PASSED (SC-03).**
 
 ### Completed Tasks
 | Task | Title | Gate |
@@ -245,42 +247,58 @@ Several tasks can be worked in parallel when their prerequisites are met:
 | T-00 | Project Scaffolding | — |
 | T-01 | ProvenanceRecord Model | — |
 | T-02 | ErrorRecord, ToolResult, StepResult, WorkflowResult | — |
+| T-03 | CanonicalMaterial and NormalizedQuery Models | — |
+| T-04 | ReportRecord, BenchmarkRow, BenchmarkSummary | — |
 | T-05 | Configuration System | — |
 | T-07 | MP Client and Fixture Capture | — |
 | T-09 | Structure Normalizer | Gate 1 PASSED |
+| T-10 | Structure Relaxer (Mock Calculator) | — |
+| T-13 | Evidence Label Assigner | Gate 2 PASSED (SC-03) |
+| T-18 | Workflow Base Classes and Engine | — |
 
-### Sequence Drift: T-03 and T-04 Skipped
+### Sequence Drift: RESOLVED
 
-T-03 (pos 5) and T-04 (pos 6) were planned for Wave 1 but were not implemented — the developer jumped directly from T-05/T-02 to T-07 and T-09. This is valid because neither T-07 nor T-09 requires T-03 or T-04. However, the drift now **blocks the following tasks** until resolved:
+T-03 and T-04, which were skipped during Wave 1, are now Done. The following tasks are newly unblocked as a result:
 
-| Blocked Task | Blocking Dependency |
-|-------------|---------------------|
-| T-08b (pos 12) | Needs T-03 |
-| T-08 (pos 13) | Needs T-03 |
-| T-22 (pos 24) | Needs T-03 |
-| T-06 (pos 8) | Needs T-04 |
-| T-15 (pos 17) | Needs T-04 |
+| Previously Blocked Task | Was Blocked By | Status Now |
+|------------------------|----------------|------------|
+| T-08b (pos 12) | T-03 | **Unblocked** |
+| T-08 (pos 13) | T-03 | **Unblocked** |
+| T-22 (pos 24) | T-03 | **Unblocked** |
+| T-06 (pos 8) | T-04 | **Unblocked** |
+| T-15 (pos 17) | T-04 | **Unblocked** |
 
-T-19 (structural_analysis workflow) depends on T-08 which depends on T-03, so **T-03 is on the path to the Phase 1 gate**.
+### Currently Unblocked Todo Tasks
+
+| Task | Priority | Size | Why Unblocked |
+|------|----------|------|---------------|
+| T-08b | P1 | XS | T-03 Done |
+| T-22 | P1 | XS | T-03 Done |
+| T-08 | P1 | S | T-03, T-07 Done |
+| T-06 | P1 | M | T-02, T-04, T-05 Done |
+| T-11 | P1 | M | T-02, T-09 Done |
+| T-12 | P1 | M | T-02 Done |
+| T-15 | P1 | M | T-02, T-04 Done |
 
 ### Reprioritized Next 10 Tasks
 
-| # | Task | Title | Why Now | Deps Met? |
-|---|------|-------|---------|-----------|
-| 1 | T-03 | CanonicalMaterial and NormalizedQuery | Overdue (pos 5); unblocks T-08b, T-08, T-22; needed for T-19 | Yes |
-| 2 | T-13 | Evidence Label Assigner | Gate 2 trigger; only needs T-02 | Yes |
-| 3 | T-12 | Validation Layer | Only needs T-02; unblocks T-14 | Yes |
-| 4 | T-04 | ReportRecord, BenchmarkRow, BenchmarkSummary | Overdue (pos 6); unblocks T-06, T-15 | Yes |
-| 5 | T-10 | Structure Relaxer (mock calculator) | P0 critical path; all deps done | Yes |
-| 6 | T-11 | Reference Comparator | All deps done (T-02, T-09) | Yes |
-| 7 | T-08b | Family Classification | After T-03 | After T-03 |
-| 8 | T-08 | Input Resolver | After T-03 + T-07 | After T-03 |
-| 9 | T-06 | Artifact Store | After T-04 | After T-04 |
-| 10 | T-14 | Physics Validator Tool | After T-12 + T-13 | After T-12/T-13 |
+| # | Task | Title | Size | Why Now | Deps Met? |
+|---|------|-------|------|---------|-----------|
+| 1 | T-08b | Family Classification Function | XS | Smallest unblocked; adds classify_family() to material.py; unblocks nothing new but completes T-03's sibling | Yes |
+| 2 | T-12 | Validation Layer (Structural + Convergence) | M | Unblocks T-14; pure logic, no tool deps | Yes |
+| 3 | T-08 | Input Resolver | S | Step 0 of every workflow; all deps done | Yes |
+| 4 | T-06 | Artifact / Provenance Store | M | Required by T-23 (critical path benchmark runner) | Yes |
+| 5 | T-11 | Reference Comparator | M | Core scientific output; all deps done | Yes |
+| 6 | T-15 | JSON Report Builder | M | Unblocks T-16, T-17 | Yes |
+| 7 | T-22 | Benchmark Registry | XS | XS task; newly unblocked by T-03 | Yes |
+| 8 | T-14 | Physics Validator Tool | S | After T-12 Done | After T-12 |
+| 9 | T-16 | Markdown Report Renderer | M | After T-15 Done | After T-15 |
+| 10 | T-17 | Report Generator Tool | XS | After T-15, T-16 Done | After T-15+T-16 |
 
-Tasks 1–6 can all be started immediately (T-03, T-04, T-10, T-11 have all deps met). Tasks 7–10 become unblocked as their dependencies complete.
+After positions 1–7 complete, T-19 (structural_analysis workflow) will have all dependencies met.
 
 ### Risks
-- T-03 and T-04 unblock 5 downstream tasks; complete them before advancing beyond position 13.
-- T-10 is P0 (critical path to Phase 1 gate); do not defer it past position 5 in this reprioritized set.
-- Gate 2 (T-13 evidence audit) should be conducted as soon as T-13 is done — do not proceed to T-14 or T-16 without it.
+- **T-19 prerequisite tail**: T-19 still needs T-08, T-08b, T-11, T-12, T-14, T-15, T-16, T-17. That is 8 tasks to clear before T-19 can start. Each is S or M sized. Prioritize these over T-22 and T-06 if throughput is the concern.
+- **T-06 is blocking T-23** (Benchmark Runner, P0 critical path). Do not defer T-06 past position 6 in this list.
+- **WorkflowContext type looseness**: `material: Any` and `normalized_query: Any` in `workflows/base.py` are intentional placeholders, to be tightened in T-19. Do not patch ahead of T-19.
+- **T-26 scope**: `.pre-commit-config.yaml` already exists. T-26 is scoped to creating `.github/workflows/ci.yml` and verifying the pre-commit config runs cleanly. No risk of overwriting existing config.

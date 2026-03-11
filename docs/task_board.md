@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-03 Done; 11/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-08b Done; 12/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -266,14 +266,14 @@
 | **Why it exists** | `CanonicalMaterial.family` must be assigned programmatically. Family classification feeds evidence label assignment — non-benchmarked families receive Level B. |
 | **Dependencies** | T-03 |
 | **Size** | XS |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/models/material.py`, `tests/unit/test_models/test_material.py` |
 | **Tests required** | 5 tests: layered oxide, olivine, spinel, unknown, case insensitivity |
 | **Acceptance criteria** | All 5 tests pass. All 3 benchmark materials classified correctly. Unknown composition returns `other`. |
 | **Scientific review** | No |
-| **Notes** | Rules: R-3m + LiMO2 → `layered_oxide`; Pnma + LiMPO4 → `olivine_polyanion`; Fd-3m + LiM2O4 → `spinel`; else → `other`. |
+| **Notes** | Rules: R-3m + LiMO2 → `layered_oxide`; Pnma + LiMPO4 → `olivine_polyanion`; Fd-3m + LiM2O4 → `spinel`; else → `other`. Implemented via `pymatgen.core.composition.Composition.reduced_composition.get_el_amt_dict()`. `FamilyLiteral` type alias added to keep signature under 88 chars. 5/5 tests pass; ruff + mypy --strict clean; 182/182 total suite passes. Completed 2026-03-12. |
 
 ---
 
@@ -700,18 +700,18 @@
 | **Task ID** | T-26 |
 | **Epic** | E-10: CLI & Hardening |
 | **Title** | Pre-commit and CI Configuration |
-| **Description** | Finalize `.pre-commit-config.yaml` and create `.github/workflows/ci.yml` with ruff, mypy, and pytest (unit tests only in CI). |
+| **Description** | Verify `.pre-commit-config.yaml` and create `.github/workflows/ci.yml` with ruff, mypy, and pytest (unit tests only in CI). |
 | **Why it exists** | Automated quality gates prevent regressions and enforce code standards. |
 | **Dependencies** | T-00 |
 | **Size** | S |
 | **Status** | Todo |
 | **Priority** | P2 |
 | **Phase** | 4 |
-| **Files affected** | `.pre-commit-config.yaml`, `.github/workflows/ci.yml` |
+| **Files affected** | `.pre-commit-config.yaml` (exists — verify/update), `.github/workflows/ci.yml` (create) |
 | **Tests required** | N/A (infrastructure task) |
 | **Acceptance criteria** | `pre-commit run --all-files` passes. CI workflow is valid YAML. |
 | **Scientific review** | No |
-| **Notes** | Skip MACE integration tests in CI (`-m "not integration"`). CI uses cached MP fixtures. |
+| **Notes** | **Scope correction (2026-03-12 review)**: `.pre-commit-config.yaml` already exists (ruff + mypy hooks). Task is now: verify it runs cleanly, update hooks if needed, and create `.github/workflows/ci.yml`. Skip MACE integration tests in CI (`-m "not integration"`). CI uses cached MP fixtures. |
 
 ---
 
@@ -814,23 +814,23 @@
 | T-00 | E-01 | Project Scaffolding | S | P0 | 1 | Done | Yes | No |
 | T-01 | E-02 | ProvenanceRecord Model | S | P0 | 1 | Done | Yes | No |
 | T-02 | E-02 | ErrorRecord, ToolResult, StepResult, WorkflowResult | M | P0 | 1 | Done | Yes | No |
-| T-03 | E-02 | CanonicalMaterial, NormalizedQuery | M | P1 | 1 | Todo | No | No |
-| T-04 | E-02 | ReportRecord, BenchmarkRow, BenchmarkSummary | S | P1 | 1 | Todo | No | No |
+| T-03 | E-02 | CanonicalMaterial, NormalizedQuery | M | P1 | 1 | Done | No | No |
+| T-04 | E-02 | ReportRecord, BenchmarkRow, BenchmarkSummary | S | P1 | 1 | Done | No | No |
 | T-05 | E-03 | Configuration System | M | P0 | 1 | Done | Yes | No |
 | T-06 | E-06 | Artifact / Provenance Store | M | P1 | 1 | Todo | No | No |
 | T-07 | E-04 | MP Client and Fixture Capture | M | P0 | 1 | Done | Yes | No |
 | T-08 | E-04 | Input Resolver | S | P1 | 1 | Todo | No | No |
-| T-08b | E-04 | Family Classification Function | XS | P1 | 1 | Todo | No | No |
-| T-09 | E-04 | Structure Normalizer | M | P0 | 1 | Todo | Yes | **Yes** |
-| T-10 | E-04 | Structure Relaxer (Mock) | M | P0 | 1 | Todo | Yes | No |
+| T-08b | E-04 | Family Classification Function | XS | P1 | 1 | Done | No | No |
+| T-09 | E-04 | Structure Normalizer | M | P0 | 1 | Done | Yes | **Yes** |
+| T-10 | E-04 | Structure Relaxer (Mock) | M | P0 | 1 | Done | Yes | No |
 | T-11 | E-04 | Reference Comparator | M | P1 | 1 | Todo | No | No |
 | T-12 | E-05 | Validation Layer | M | P1 | 1 | Todo | No | No |
-| T-13 | E-05 | Evidence Label Assigner | S | P1 | 1 | Todo | No | **Yes** |
+| T-13 | E-05 | Evidence Label Assigner | S | P1 | 1 | Done | No | **Yes** |
 | T-14 | E-05 | Physics Validator Tool | S | P1 | 1 | Todo | No | No |
 | T-15 | E-07 | JSON Report Builder | M | P1 | 1 | Todo | No | No |
 | T-16 | E-07 | Markdown Report Renderer | M | P1 | 1 | Todo | No | **Yes** |
 | T-17 | E-07 | Report Generator Tool | XS | P1 | 1 | Todo | No | No |
-| T-18 | E-08 | Workflow Engine | M | P0 | 1 | Todo | Yes | No |
+| T-18 | E-08 | Workflow Engine | M | P0 | 1 | Done | Yes | No |
 | T-19 | E-08 | structural_analysis Workflow | S | P0 | 1 | Todo | Yes | No |
 | T-20 | E-08 | Integration — LiCoO2 Pipeline | M | P0 | 1 | Todo | Yes | **Yes** |
 | T-21 | E-08 | Integration — LiFePO4, LiMn2O4 | S | P0 | 1 | Todo | Yes | No |

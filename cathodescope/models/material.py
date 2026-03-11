@@ -13,6 +13,7 @@ from datetime import UTC, datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pymatgen.core.composition import Composition
 
 from cathodescope.models.provenance import ProvenanceRecord
 
@@ -153,3 +154,90 @@ class CanonicalMaterial(BaseModel):
                 "(expected pymatgen Structure.as_dict() format)."
             )
         return v
+
+
+FamilyLiteral = Literal["layered_oxide", "olivine_polyanion", "spinel", "other"]
+
+
+def classify_family(space_group: str, formula: str) -> FamilyLiteral:
+    """Classify a cathode material family from its space group and formula.
+
+    Applies the three benchmark family rules in order:
+
+    * ``R-3m`` + LiMO2 composition  → ``layered_oxide``
+    * ``Pnma`` + LiMPO4 composition → ``olivine_polyanion``
+    * ``Fd-3m`` + LiM2O4 composition → ``spinel``
+    * Everything else               → ``other``
+
+    Space-group comparison is case-insensitive.  Formula is parsed by
+    ``pymatgen.core.composition.Composition`` and reduced to its smallest
+    integer ratio before matching.
+
+    Parameters
+    ----------
+    space_group:
+        Hermann–Mauguin space-group symbol (e.g. ``"R-3m"``, ``"Pnma"``).
+    formula:
+        Chemical formula string (e.g. ``"LiCoO2"``, ``"LiFePO4"``).
+
+    Returns
+    -------
+    str
+        One of ``"layered_oxide"``, ``"olivine_polyanion"``, ``"spinel"``,
+        or ``"other"``.
+    """
+    sg = space_group.strip().lower()
+
+    try:
+        amounts = Composition(formula).reduced_composition.get_el_amt_dict()
+    except Exception:
+        return "other"
+
+    if sg == "r-3m" and _is_limo2(amounts):
+        return "layered_oxide"
+    if sg == "pnma" and _is_limpo4(amounts):
+        return "olivine_polyanion"
+    if sg == "fd-3m" and _is_lim2o4(amounts):
+        return "spinel"
+    return "other"
+
+
+def _is_limo2(amounts: dict[str, float]) -> bool:
+    """Return True if the element amounts match the LiMO2 pattern.
+
+    Pattern: Li = 1, O = 2, exactly one other element with count = 1.
+    """
+    if amounts.get("Li", 0.0) != 1.0:
+        return False
+    if amounts.get("O", 0.0) != 2.0:
+        return False
+    other = {k: v for k, v in amounts.items() if k not in ("Li", "O")}
+    return len(other) == 1 and next(iter(other.values())) == 1.0
+
+
+def _is_limpo4(amounts: dict[str, float]) -> bool:
+    """Return True if the element amounts match the LiMPO4 pattern.
+
+    Pattern: Li = 1, P = 1, O = 4, exactly one other element with count = 1.
+    """
+    if amounts.get("Li", 0.0) != 1.0:
+        return False
+    if amounts.get("P", 0.0) != 1.0:
+        return False
+    if amounts.get("O", 0.0) != 4.0:
+        return False
+    other = {k: v for k, v in amounts.items() if k not in ("Li", "P", "O")}
+    return len(other) == 1 and next(iter(other.values())) == 1.0
+
+
+def _is_lim2o4(amounts: dict[str, float]) -> bool:
+    """Return True if the element amounts match the LiM2O4 pattern.
+
+    Pattern: Li = 1, O = 4, exactly one other element with count = 2.
+    """
+    if amounts.get("Li", 0.0) != 1.0:
+        return False
+    if amounts.get("O", 0.0) != 4.0:
+        return False
+    other = {k: v for k, v in amounts.items() if k not in ("Li", "O")}
+    return len(other) == 1 and next(iter(other.values())) == 2.0
