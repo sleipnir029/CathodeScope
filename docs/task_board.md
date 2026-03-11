@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-09 Done)
+**Last Updated**: 2026-03-11 (T-10 Done; 7/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -133,7 +133,7 @@
 | **Tests required** | 16 tests: NormalizedQuery (6), CanonicalMaterial (10) |
 | **Acceptance criteria** | All 16 tests pass. Invalid family/source values rejected. Pymatgen `as_dict()` structures round-trip through the model. |
 | **Scientific review** | No |
-| **Notes** | Store `structure` as `dict` with validator checking for `lattice` and `sites` keys. Do not create factory functions depending on MP client. |
+| **Notes** | Store `structure` as `dict` with validator checking for `lattice` and `sites` keys. Do not create factory functions depending on MP client. **⚠️ Sequence drift**: planned for Wave 1 position 5 but was skipped when T-07 and T-09 were implemented first. Must be completed before T-08b, T-08, and T-22 can start. |
 
 ---
 
@@ -155,7 +155,7 @@
 | **Tests required** | 18 tests: ReportSection (3), ReportRecord (6), BenchmarkRow (4), BenchmarkSummary (5) |
 | **Acceptance criteria** | All 18 tests pass. `BenchmarkSummary` rejects inconsistent `materials_count` / `status_counts` / `rows`. |
 | **Scientific review** | No |
-| **Notes** | Do not create rendering logic in models — models are pure data. `ReportRecord` includes `raw_user_input` field. |
+| **Notes** | Do not create rendering logic in models — models are pure data. `ReportRecord` includes `raw_user_input` field. **⚠️ Sequence drift**: planned for Wave 1 position 6 but was skipped. Must be completed before T-06 and T-15 can start. |
 
 ---
 
@@ -294,7 +294,7 @@
 | **Acceptance criteria** | All 14 tests pass. LiCoO2: R-3m, 12 atoms. LiFePO4: Pnma, 28 atoms. LiMn2O4: Fd-3m, 56 atoms. |
 | **Scientific review** | **Yes** — Space group preservation review. Verify against `scientific_validity_matrix.md` Row 2. |
 | **Completed** | 2026-03-11 |
-| **Notes** | `normalize(structure_dict, mp_id, formula) -> ToolResult` wraps SpacegroupAnalyzer. evidence_type="A-computed". Fixture inputs updated to proper crystallographic structures generated via pymatgen from_spacegroup() (LiCoO2: hexagonal R-3m 12 atoms, LiFePO4: Pnma 28 atoms, LiMn2O4: Fd-3m 56 atoms). Conventional structure fixtures saved to tests/fixtures/structures/. mp_responses fixtures updated to replace approximate structures. 14/14 tests pass, 93/93 total pass. ruff + mypy clean. Scientific wording: evidence_type="A-computed" per validity matrix Row 2. |
+| **Notes** | `normalize(structure_dict, mp_id, formula) -> ToolResult` wraps SpacegroupAnalyzer. evidence_type="A-computed". Fixture inputs updated to proper crystallographic structures generated via pymatgen from_spacegroup() (LiCoO2: hexagonal R-3m 12 atoms, LiFePO4: Pnma 28 atoms, LiMn2O4: Fd-3m 56 atoms). Conventional structure fixtures saved to tests/fixtures/structures/. mp_responses fixtures updated to replace approximate structures. 14/14 tests pass, 93/93 total pass. ruff + mypy clean. Scientific wording: evidence_type="A-computed" per validity matrix Row 2. **Gate 1 PASSED**: R-3m (LiCoO2) ✓, Pnma (LiFePO4) ✓, Fd-3m (LiMn2O4) ✓ — all three benchmark space groups preserved through normalization. |
 
 ---
 
@@ -309,14 +309,15 @@
 | **Why it exists** | The relaxer is the primary computation step. Unit tests verify workflow logic independently of the MACE model. |
 | **Dependencies** | T-02, T-05, T-09 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/tools/structure_relaxer.py`, `tests/unit/test_tools/test_structure_relaxer.py` |
 | **Tests required** | 19 tests: result format, evidence type, convergence info, non-convergence, divergence, NaN forces, volume change, structure collapse, config respect, cell relaxation, provenance |
 | **Acceptance criteria** | All 19 tests pass with mock calculator. Convergence and non-convergence paths tested. Error paths (NaN, divergence, collapse) tested. |
 | **Scientific review** | No (real MACE testing is T-20) |
-| **Notes** | Accept calculator as parameter (dependency injection). Create `MockCalculator` in test file. Track energy and fmax at each step. Do not import from other tools. |
+| **Completed** | 2026-03-11 |
+| **Notes** | Accept calculator as parameter (dependency injection). MockCalculators in test file use ASE Calculator base with `use_cache=True` for reliable step-by-step control. irun() generator pattern used for per-step NaN/divergence checks. `_max_volume_change_pct` and `_min_bond_angstrom` underscore params enable threshold injection for edge-case tests. `converged` stored as Python `bool()` (not numpy bool) throughout. |
 
 ---
 
