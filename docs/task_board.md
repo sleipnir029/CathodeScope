@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-11 (T-10 Done; 7/32 tasks complete)
+**Last Updated**: 2026-03-11 (T-18 Done; 8/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -490,14 +490,15 @@
 | **Why it exists** | The engine sequences all tools into a pipeline. It must be tool-agnostic. |
 | **Dependencies** | T-02, T-05 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/workflows/base.py`, `cathodescope/workflows/engine.py`, `tests/unit/test_workflows/test_engine.py` |
 | **Tests required** | 17 tests: registry (3), context (2), engine (12 — step execution, context passing, result recording, timestamps, runtime, config snapshot, failure handling, partial results, classification, error non-swallowing, provenance) |
 | **Acceptance criteria** | All 17 tests pass. Engine is tool-agnostic — no imports from `cathodescope.tools`. Partial results preserved on failure. |
 | **Scientific review** | No |
-| **Notes** | Use mock step functions in unit tests. `WorkflowContext` is a typed dataclass per `architecture.md` Section 4.3. |
+| **Completed** | 2026-03-11 |
+| **Notes** | StepSpec(name, step_fn) where step_fn: (WorkflowContext) -> ToolResult; engine wraps in StepResult with timing. WorkflowContext typed dataclass with material: Any (CanonicalMaterial placeholder until T-03), step_results: dict[str,StepResult]. Engine maps ToolResult.status to WorkflowStatus: "failure" stops pipeline early; "partial" sets overall status "partial"; all "success" → "success". Unexpected exceptions propagate (never swallowed). Provenance via create_provenance() with elapsed_seconds and config_snapshot. 17/17 tests pass. ruff + mypy clean. 129/129 total suite passes. |
 
 ---
 
