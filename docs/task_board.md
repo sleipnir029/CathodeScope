@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-08 Done; 13/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-22 Done; 14/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -587,14 +587,15 @@
 | **Why it exists** | Separates material definitions from runner logic. Required by the benchmark runner. |
 | **Dependencies** | T-03 |
 | **Size** | XS |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 2 |
 | **Files affected** | `cathodescope/benchmark/registry.py`, `tests/unit/test_benchmark/test_registry.py` |
 | **Tests required** | 8 tests: 3 materials present, each entry correct, get by name, unknown benchmark error, families, benchmark tags |
 | **Acceptance criteria** | All 8 tests pass. Phase 1 benchmark name: `"phase1_structural_analysis"`. |
 | **Scientific review** | No |
-| **Notes** | Do not hardcode material data in the runner. Three families: LiCoO2 (mp-22526, layered_oxide), LiFePO4 (mp-19017, olivine_polyanion), LiMn2O4 (mp-18767, spinel). |
+| **Completed** | 2026-03-12 |
+| **Notes** | `BenchmarkMaterialRegistry.get_materials(benchmark_name)` returns list of dicts with formula, mp_id, family, benchmark_tags. Unknown names raise ValueError. 8/8 tests pass; ruff + mypy clean; 202/202 total suite passes. |
 
 ---
 
@@ -835,7 +836,7 @@
 | T-19 | E-08 | structural_analysis Workflow | S | P0 | 1 | Todo | Yes | No |
 | T-20 | E-08 | Integration — LiCoO2 Pipeline | M | P0 | 1 | Todo | Yes | **Yes** |
 | T-21 | E-08 | Integration — LiFePO4, LiMn2O4 | S | P0 | 1 | Todo | Yes | No |
-| T-22 | E-09 | Benchmark Registry | XS | P1 | 2 | Todo | No | No |
+| T-22 | E-09 | Benchmark Registry | XS | P1 | 2 | Done | No | No |
 | T-23 | E-09 | Benchmark Runner | M | P0 | 2 | Todo | Yes | No |
 | T-24 | E-09 | Benchmark Integration Test | S | P0 | 2 | Todo | Yes | **Yes** |
 | T-24b | E-09 | Benchmark Regression Comparator | S | P1 | 2 | Todo | No | No |
