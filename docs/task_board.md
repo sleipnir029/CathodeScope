@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-24 Done; 27/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-25 Done; 28/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -691,14 +691,15 @@
 | **Why it exists** | The CLI wraps the pipeline for non-programmatic usage and enables the 3-minute demo. |
 | **Dependencies** | T-19, T-23 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P2 |
 | **Phase** | 3 |
 | **Files affected** | `cathodescope/app/cli.py`, `tests/integration/test_cli.py` |
 | **Tests required** | 7 tests: analyze command exists, analyze produces report, invalid formula error, benchmark command exists, benchmark runs phase1, help shows usage, version shows version |
 | **Acceptance criteria** | All 7 tests pass. `cathodescope analyze LiCoO2` produces report. 3-minute demo completable. |
 | **Scientific review** | No |
-| **Notes** | Entry point in `pyproject.toml`. Progress to stderr, report path to stdout. Zero extra dependencies (argparse is stdlib). |
+| **Completed** | 2026-03-12 |
+| **Notes** | Entry point added to `pyproject.toml`. Progress to stderr, report path to stdout. `_save_report` writes report.md + report.json to `artifacts/reports/{run_id}/`. All 7 tests pass; ruff + mypy clean. |
 
 ---
 
