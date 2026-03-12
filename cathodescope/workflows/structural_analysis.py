@@ -252,20 +252,29 @@ def _step_relax(context: WorkflowContext) -> ToolResult:
 
 
 def _step_compare_reference(context: WorkflowContext) -> ToolResult:
-    """Step 4: Compare the relaxed structure against the MP reference.
+    """Step 4: Compare the relaxed structure against the normalized MP reference.
 
-    Reads the relaxed structure from the ``relax`` step result and the original
-    (reference) structure from the ``fetch_structure`` step result.
+    Reads the relaxed structure from the ``relax`` step result and the
+    normalized (conventional standard) reference structure from the
+    ``normalize`` step result.  Both are in the same conventional standard
+    cell orientation, making axis-by-axis lattice comparison meaningful.
+
+    Using the normalized reference — rather than the raw MP fetch structure —
+    avoids spurious deviations caused by axis reordering: pymatgen's
+    ``get_conventional_standard_structure()`` can change axis order (e.g. for
+    Pnma LiFePO4 the raw MP a≈10.4 Å becomes the conventional c≈10.4 Å).
+    The relaxed structure starts from the normalized structure and therefore
+    shares its axis labeling.
     """
     from pymatgen.core.structure import Structure
 
     from cathodescope.tools import reference_comparator
 
     relax_data = context.step_results["relax"].tool_result.data or {}
-    fetch_data = context.step_results["fetch_structure"].tool_result.data or {}
+    normalize_data = context.step_results["normalize"].tool_result.data or {}
 
     relaxed = Structure.from_dict(relax_data["structure"])
-    reference = Structure.from_dict(fetch_data["structure"])
+    reference = Structure.from_dict(normalize_data["structure"])
 
     comparison_config = getattr(context.config, "comparison", None)
     return reference_comparator.compare(relaxed, reference, comparison_config)
