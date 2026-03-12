@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-26 Done; 29/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-27 Done; 30/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -741,14 +741,15 @@
 | **Why it exists** | The layered architecture must be enforced programmatically, not just by convention. |
 | **Dependencies** | All previous tasks |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P2 |
 | **Phase** | 4 |
 | **Files affected** | `tests/test_import_rules.py` |
 | **Tests required** | 10 tests: models isolation (2), tools isolation (1), validation isolation (2), reporting isolation (2), provenance isolation (1), benchmark isolation (1), agent directory (1) |
 | **Acceptance criteria** | All 10 tests pass. Any import rule violation caught automatically. |
 | **Scientific review** | No |
-| **Notes** | Use `ast.parse()` to inspect import statements. Do not use runtime import checking. |
+| **Completion date** | 2026-03-12 |
+| **Notes** | Used ast.parse() with _get_cathodescope_imports() helper. All 10 enforcement tests + 2 T-00 scaffold tests pass (12 total). ruff + mypy clean. No violations found in existing codebase. |
 
 ---
 
