@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-27 Done; 30/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-28 Done; 31/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -764,14 +764,15 @@
 | **Why it exists** | Golden outputs enable regression tests and ensure CI works offline. |
 | **Dependencies** | T-20 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P2 |
 | **Phase** | 4 |
 | **Files affected** | `scripts/capture_fixtures.py`, `tests/fixtures/expected_outputs/licoo2_workflow_result.json`, `tests/fixtures/expected_outputs/licoo2_report.json`, `tests/fixtures/expected_outputs/benchmark_summary.json` |
 | **Tests required** | N/A (tooling task — golden outputs consumed by T-29) |
 | **Acceptance criteria** | All fixture files exist and contain valid JSON. Fixtures committed. Script has `--force` flag. |
 | **Scientific review** | No |
-| **Notes** | Script is idempotent. Golden outputs frozen after first generation. |
+| **Completed** | 2026-03-12 |
+| **Notes** | Script restructured with argparse (`--force`, `--mp`, `--golden`). Default mode is `--golden` (offline, mock MACE). Uses `_OfflineMPClient` (fixture files) + `_MockZeroForceCalc` (zero forces → immediate convergence, deterministic). Golden outputs use mock calculator so T-29 regression tests can compare offline. `benchmark_summary.json` shows 3/3 Full Success with mock calc. Script is idempotent; `--force` to regenerate. ruff + mypy clean (pre-existing structure_relaxer.py errors not introduced by this task). |
 
 ---
 
