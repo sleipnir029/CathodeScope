@@ -122,7 +122,7 @@ def _make_canonical_material(
         formula=formula,
         reduced_formula=reduced_formula,
         family=family,
-        structure=normalize_data["normalized_structure"],
+        structure=normalize_data["structure"],
         source="materials_project",
         mp_id=fetch_data.get("mp_id"),
         provenance=prov,
@@ -239,7 +239,7 @@ def _step_relax(context: WorkflowContext) -> ToolResult:
     from cathodescope.tools import structure_relaxer
 
     normalize_data = context.step_results["normalize"].tool_result.data or {}
-    structure = Structure.from_dict(normalize_data["normalized_structure"])
+    structure = Structure.from_dict(normalize_data["structure"])
     calculator = _get_calculator(context)
 
     from cathodescope.config.settings import RelaxationConfig
@@ -264,7 +264,7 @@ def _step_compare_reference(context: WorkflowContext) -> ToolResult:
     relax_data = context.step_results["relax"].tool_result.data or {}
     fetch_data = context.step_results["fetch_structure"].tool_result.data or {}
 
-    relaxed = Structure.from_dict(relax_data["relaxed_structure"])
+    relaxed = Structure.from_dict(relax_data["structure"])
     reference = Structure.from_dict(fetch_data["structure"])
 
     comparison_config = getattr(context.config, "comparison", None)
@@ -285,7 +285,7 @@ def _step_validate(context: WorkflowContext) -> ToolResult:
     compare_data = context.step_results["compare_reference"].tool_result.data
 
     validation_context: dict[str, Any] = {
-        "relaxed_structure": relax_data.get("relaxed_structure"),
+        "relaxed_structure": relax_data.get("structure"),
         "convergence_info": relax_data.get("convergence_info"),
         "comparison_result": compare_data,
     }

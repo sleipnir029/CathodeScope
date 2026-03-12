@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-19 Done; 24/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-20 Done; 25/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -547,14 +547,15 @@
 | **Why it exists** | Validates the entire pipeline end-to-end with real MACE. This is the first real scientific computation and the Phase 1 gate test. |
 | **Dependencies** | T-00 through T-19 (all) |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `tests/integration/test_single_material_pipeline.py` |
 | **Tests required** | 14 tests: workflow result, status success, all steps completed, lattice deviations a and c < 2%, volume < 5%, symmetry preserved, report generated, all Level A labels, artifacts stored, provenance complete, rerun reproducibility, offline completion, integrity check |
 | **Acceptance criteria** | All 14 tests pass. Constitutes Phase 1 gate acceptance test. |
 | **Scientific review** | **Yes** — MACE accuracy verification (SC-01, SC-02). Verify LiCoO2 lattice parameters within 2% of MP reference. |
-| **Notes** | Uses cached MP fixture (no live API). Real MACE-MP-0 for relaxation. Mark tests with `@pytest.mark.integration`. Verify MACE installs before running. |
+| **Completed** | 2026-03-12 |
+| **Notes** | All 14/14 integration tests pass. SC-01 PASSED: MACE-MP-0 installed and runs. SC-02 PASSED: LiCoO2 a-axis and c-axis deviations < 2%, volume < 5%, R-3m symmetry preserved. Fixed two key-name bugs in structural_analysis.py: normalizer outputs "structure" (not "normalized_structure") and relaxer outputs "structure" (not "relaxed_structure"). Registered `integration` marker in pyproject.toml. 318 unit tests still pass; ruff + mypy clean. |
 
 ---
 
@@ -829,20 +830,20 @@
 | T-05 | E-03 | Configuration System | M | P0 | 1 | Done | Yes | No |
 | T-06 | E-06 | Artifact / Provenance Store | M | P1 | 1 | Done | No | No |
 | T-07 | E-04 | MP Client and Fixture Capture | M | P0 | 1 | Done | Yes | No |
-| T-08 | E-04 | Input Resolver | S | P1 | 1 | Todo | No | No |
+| T-08 | E-04 | Input Resolver | S | P1 | 1 | Done | No | No |
 | T-08b | E-04 | Family Classification Function | XS | P1 | 1 | Done | No | No |
 | T-09 | E-04 | Structure Normalizer | M | P0 | 1 | Done | Yes | **Yes** |
 | T-10 | E-04 | Structure Relaxer (Mock) | M | P0 | 1 | Done | Yes | No |
-| T-11 | E-04 | Reference Comparator | M | P1 | 1 | Todo | No | No |
+| T-11 | E-04 | Reference Comparator | M | P1 | 1 | Done | No | No |
 | T-12 | E-05 | Validation Layer | M | P1 | 1 | Done | No | No |
 | T-13 | E-05 | Evidence Label Assigner | S | P1 | 1 | Done | No | **Yes** |
-| T-14 | E-05 | Physics Validator Tool | S | P1 | 1 | Todo | No | No |
+| T-14 | E-05 | Physics Validator Tool | S | P1 | 1 | Done | No | No |
 | T-15 | E-07 | JSON Report Builder | M | P1 | 1 | Done | No | No |
 | T-16 | E-07 | Markdown Report Renderer | M | P1 | 1 | Done | No | **Yes** |
-| T-17 | E-07 | Report Generator Tool | XS | P1 | 1 | Todo | No | No |
+| T-17 | E-07 | Report Generator Tool | XS | P1 | 1 | Done | No | No |
 | T-18 | E-08 | Workflow Engine | M | P0 | 1 | Done | Yes | No |
-| T-19 | E-08 | structural_analysis Workflow | S | P0 | 1 | Todo | Yes | No |
-| T-20 | E-08 | Integration — LiCoO2 Pipeline | M | P0 | 1 | Todo | Yes | **Yes** |
+| T-19 | E-08 | structural_analysis Workflow | S | P0 | 1 | Done | Yes | No |
+| T-20 | E-08 | Integration — LiCoO2 Pipeline | M | P0 | 1 | Done | Yes | **Yes** |
 | T-21 | E-08 | Integration — LiFePO4, LiMn2O4 | S | P0 | 1 | Todo | Yes | No |
 | T-22 | E-09 | Benchmark Registry | XS | P1 | 2 | Done | No | No |
 | T-23 | E-09 | Benchmark Runner | M | P0 | 2 | Done | Yes | No |
