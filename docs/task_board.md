@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-16 Done; 22/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-17 Done; 23/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -478,14 +478,15 @@
 | **Why it exists** | Conforms report generation to the universal tool contract (`ToolResult`). |
 | **Dependencies** | T-15, T-16 |
 | **Size** | XS |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/tools/report_generator.py`, `tests/unit/test_tools/test_report_generator.py` |
 | **Tests required** | 7 tests: return type, evidence type (metadata), data contains JSON and Markdown, evidence summary, missing step handling, provenance |
 | **Acceptance criteria** | All 7 tests pass. No business logic duplication — pure delegation. |
 | **Scientific review** | No |
-| **Notes** | `evidence_type` is `"metadata"` — excluded from evidence summary count. |
+| **Completed** | 2026-03-12 |
+| **Notes** | `evidence_type` is `"metadata"` — excluded from evidence summary count. `generate(workflow_result, material) -> ToolResult`; delegates to `build_json_report()` + `render_markdown()`; data keys: `report_json` (dict), `report_markdown` (str), `evidence_summary` (dict). 7/7 tests pass. ruff + mypy clean. 311/311 total suite passes. |
 
 ---
 
