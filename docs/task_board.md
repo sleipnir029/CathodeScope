@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-15 Done; 21/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-16 Done; 22/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -455,14 +455,15 @@
 | **Why it exists** | Human-readable reports with inline evidence labels are a core thesis deliverable. |
 | **Dependencies** | T-15 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/reporting/markdown_report.py`, `tests/unit/test_reporting/test_markdown_report.py` |
 | **Tests required** | 13 tests: return type, title, section headers with evidence levels, MP ID, MACE version, convergence details, lattice deviations, assessment paragraph, no disallowed words, validity matrix format match |
 | **Acceptance criteria** | All 13 tests pass. Section headers: `### ... [Level X -- sub-type]`. No "validated structure", "discovered", "proved stable", "accurate" without reference. |
 | **Scientific review** | **Yes** — Report wording audit (SC-04). Compare output against mock excerpt in `scientific_validity_matrix.md` Section 5. |
-| **Notes** | Do not parse JSON report as text — use structured `ReportRecord` object. Never use "good agreement" — always quantitative. |
+| **Completed** | 2026-03-12 |
+| **Notes** | render_markdown(report) -> str. Section headers: `### {heading} [Level X -- sub-type]`. Evidence Summary rendered as **Assessment** paragraph; Provenance Summary rendered without evidence label. MACE version hardcoded as "MACE-MP-0 (v0.3.6)". Methodology caveat appended to every report. All 10 wording rules enforced; disallowed-word test passes. SC-04 passed: output matches mock excerpt format from scientific_validity_matrix.md Section 5. 13/13 tests pass; ruff + mypy clean; 304/304 total suite passes. |
 
 ---
 
@@ -835,7 +836,7 @@
 | T-13 | E-05 | Evidence Label Assigner | S | P1 | 1 | Done | No | **Yes** |
 | T-14 | E-05 | Physics Validator Tool | S | P1 | 1 | Todo | No | No |
 | T-15 | E-07 | JSON Report Builder | M | P1 | 1 | Done | No | No |
-| T-16 | E-07 | Markdown Report Renderer | M | P1 | 1 | Todo | No | **Yes** |
+| T-16 | E-07 | Markdown Report Renderer | M | P1 | 1 | Done | No | **Yes** |
 | T-17 | E-07 | Report Generator Tool | XS | P1 | 1 | Todo | No | No |
 | T-18 | E-08 | Workflow Engine | M | P0 | 1 | Done | Yes | No |
 | T-19 | E-08 | structural_analysis Workflow | S | P0 | 1 | Todo | Yes | No |
