@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-22 Done; 14/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-06 Done; 15/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -199,14 +199,15 @@
 | **Why it exists** | The store must exist before integration testing so workflow results can be persisted. Required by the workflow engine and benchmark runner. |
 | **Dependencies** | T-02, T-04, T-05 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/provenance/store.py`, `tests/unit/test_provenance/test_store.py` |
 | **Tests required** | 17 tests: write/read for each artifact type, directory structure, read-only enforcement, overwrite rejection, integrity check, cache behavior |
 | **Acceptance criteria** | All 17 tests pass. Directory structure matches schema. Artifact files read-only after write. Cache directory allows overwrites. JSON uses 2-space indent. |
 | **Scientific review** | No |
-| **Notes** | Do not import from `cathodescope.tools` or `cathodescope.workflows`. Integrity check validates artifacts up to last completed step for incomplete workflows. |
+| **Completed** | 2026-03-12 |
+| **Notes** | `ArtifactStore(root)` with type-specific write/read methods. Non-cache files set to 0o444 after write; overwrite raises `ArtifactError`. Cache (`cache/mp/`) allows free overwrite. `verify_integrity(workflow_run_id)` checks result.json exists. Provenance convenience copy written alongside canonical/workflow/benchmark artifacts. 17/17 tests pass; ruff + mypy clean; 219/219 suite passes. |
 
 ---
 
@@ -819,7 +820,7 @@
 | T-03 | E-02 | CanonicalMaterial, NormalizedQuery | M | P1 | 1 | Done | No | No |
 | T-04 | E-02 | ReportRecord, BenchmarkRow, BenchmarkSummary | S | P1 | 1 | Done | No | No |
 | T-05 | E-03 | Configuration System | M | P0 | 1 | Done | Yes | No |
-| T-06 | E-06 | Artifact / Provenance Store | M | P1 | 1 | Todo | No | No |
+| T-06 | E-06 | Artifact / Provenance Store | M | P1 | 1 | Done | No | No |
 | T-07 | E-04 | MP Client and Fixture Capture | M | P0 | 1 | Done | Yes | No |
 | T-08 | E-04 | Input Resolver | S | P1 | 1 | Todo | No | No |
 | T-08b | E-04 | Family Classification Function | XS | P1 | 1 | Done | No | No |
