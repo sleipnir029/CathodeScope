@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-24b Done; 17/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-11 Done; 18/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -336,14 +336,15 @@
 | **Why it exists** | The comparator produces the scientific value of the pipeline — quantitative deviations between relaxed and reference structures. |
 | **Dependencies** | T-02, T-09 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
+| **Completed** | 2026-03-12 |
 | **Files affected** | `cathodescope/tools/reference_comparator.py`, `tests/unit/test_tools/test_reference_comparator.py` |
 | **Tests required** | 12 tests: identical structures, lattice deviations, angle deviations, volume deviation, symmetry check, tool result, evidence type, required fields, composition mismatch, deviation formula, hand-computed values |
 | **Acceptance criteria** | All 12 tests pass. Hand-computed deviations match programmatic values to `pytest.approx(0.001)`. |
 | **Scientific review** | No |
-| **Notes** | Use "deviation" not "error" — per `scientific_validity_matrix.md` Rule 6. Deviation formula: `|relaxed - reference| / reference * 100`. |
+| **Notes** | `compare(relaxed, reference, config) -> ToolResult`. Deviation formula: `\|relaxed - reference\| / reference * 100`. Keys: `lattice_deviations` (a/b/c %), `angle_deviations` (alpha/beta/gamma %), `volume_deviation` (%), `symmetry_preserved` (bool), `reference_space_group`, `relaxed_space_group`, `within_lattice_tolerance`, `within_volume_tolerance`. Composition mismatch → `status="failure"` InputError. evidence_type="A-compared". 12/12 tests pass; ruff + mypy clean; 251/251 total suite passes. |
 
 ---
 
