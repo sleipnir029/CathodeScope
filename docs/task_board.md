@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-12 Done; 19/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-14 Done; 20/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -405,14 +405,15 @@
 | **Why it exists** | Combines validation and evidence labeling into a tool conforming to the universal `ToolResult` contract. |
 | **Dependencies** | T-12, T-13, T-05 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/tools/physics_validator.py`, `tests/unit/test_tools/test_physics_validator.py` |
 | **Tests required** | 12 tests: result format, checks list, evidence labels, overall sanity, valid data, bond length failure, convergence failure, symmetry break, warnings, critical failure |
 | **Acceptance criteria** | All 12 tests pass. Valid data → `overall_sanity: True`. Invalid data → specific check failures with structured messages. |
 | **Scientific review** | No |
-| **Notes** | Delegate to `validation.structural`, `validation.convergence`, `validation.evidence`. Do not duplicate check logic. |
+| **Completed** | 2026-03-12 |
+| **Notes** | Delegates to validation.structural, validation.convergence, validation.evidence. Symmetry check reuses comparison_result when available; falls back to SpacegroupAnalyzer. Critical checks: bond_lengths, atom_overlap, fmax, step_count, symmetry_preserved. Soft (energy_monotonicity) → warnings only. |
 
 ---
 
