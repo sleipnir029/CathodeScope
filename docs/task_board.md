@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-11 Done; 18/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-12 Done; 19/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -359,14 +359,15 @@
 | **Why it exists** | Sanity checks must exist before the physics validator tool can use them. The validation layer contains pure logic. |
 | **Dependencies** | T-02 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
+| **Completed** | 2026-03-12 |
 | **Files affected** | `cathodescope/validation/structural.py`, `cathodescope/validation/convergence.py`, `cathodescope/validation/family_specific.py` (stubs), `tests/unit/test_validation/test_structural.py`, `tests/unit/test_validation/test_convergence.py` |
 | **Tests required** | 16 tests: structural (8), convergence (8) |
 | **Acceptance criteria** | All 16 tests pass. Check results are structured dicts with `check_name`, `passed`, `value`, `threshold`, `message`. |
 | **Scientific review** | No |
-| **Notes** | Do not import from `cathodescope.tools` or `cathodescope.config`. `family_specific.py` returns empty check lists for MVP. |
+| **Notes** | `CheckResult` TypedDict defined in `cathodescope/validation/__init__.py` (shared by all sub-modules). `check_bond_lengths(structure_dict, min_bond, max_bond)` → fails if min_dist < min_bond (collapsed) or no neighbour within max_bond (exploded). `check_atom_overlap(structure_dict, overlap_threshold=0.5)` → fails if any pair < threshold. `check_coordination_numbers(structure_dict, cutoff)` → always passed, returns avg coords per element. `run_structural_checks()` → list of 3 CheckResults. `check_fmax(fmax, threshold)` → passes when fmax ≤ threshold. `check_energy_monotonicity(energy_history, tolerance)` → fails if max single-step increase > tolerance. `check_step_count(steps, max_steps, warn_pct=0.9)` → passes if steps < max_steps; warning message if ratio ≥ warn_pct. `run_convergence_checks(convergence_info, max_steps, ...)` → list of CheckResults. `family_specific.run_family_specific_checks()` → empty list (MVP stub). 16/16 tests pass; ruff + mypy clean; 267/267 total suite passes. |
 
 ---
 
@@ -828,7 +829,7 @@
 | T-09 | E-04 | Structure Normalizer | M | P0 | 1 | Done | Yes | **Yes** |
 | T-10 | E-04 | Structure Relaxer (Mock) | M | P0 | 1 | Done | Yes | No |
 | T-11 | E-04 | Reference Comparator | M | P1 | 1 | Todo | No | No |
-| T-12 | E-05 | Validation Layer | M | P1 | 1 | Todo | No | No |
+| T-12 | E-05 | Validation Layer | M | P1 | 1 | Done | No | No |
 | T-13 | E-05 | Evidence Label Assigner | S | P1 | 1 | Done | No | **Yes** |
 | T-14 | E-05 | Physics Validator Tool | S | P1 | 1 | Todo | No | No |
 | T-15 | E-07 | JSON Report Builder | M | P1 | 1 | Todo | No | No |
