@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-28 Done; 31/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-29 Done; 32/32 non-agent tasks complete; T-30 Todo)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -787,14 +787,15 @@
 | **Why it exists** | Regression tests detect unintended changes across refactors. |
 | **Dependencies** | T-28 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P2 |
 | **Phase** | 4 |
 | **Files affected** | `tests/unit/test_regression.py` |
 | **Tests required** | 4 tests: workflow result match, report sections match, evidence summary match, benchmark metrics match |
 | **Acceptance criteria** | All 4 tests pass. Numerical comparisons use `pytest.approx(abs=0.01)`. UUIDs/timestamps excluded. |
 | **Scientific review** | No |
-| **Notes** | Use mock MACE (deterministic forces) for regression runs. String fields compared exactly. |
+| **Completed** | 2026-03-12 |
+| **Notes** | Implemented with _MockZeroForceCalc + _OfflineMPClient (offline, no MACE). Module-scoped fixtures for workflow/report; function-scoped tmp_path for benchmark. All 4 tests green. 339 total (non-integration) passing. |
 
 ---
 
