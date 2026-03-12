@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-06 Done; 15/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-23 Done; 16/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -611,14 +611,14 @@
 | **Why it exists** | The runner orchestrates the structural_analysis workflow across all benchmark materials with structured result collection and failure isolation. |
 | **Dependencies** | T-18, T-22, T-04, T-06 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 2 |
 | **Files affected** | `cathodescope/benchmark/runner.py`, `tests/unit/test_benchmark/test_runner.py` |
 | **Tests required** | 13 tests: all materials processed, summary returned, materials count, status counts, row per material, all metrics, failure isolation, continue after failure, failure classification, artifact storage, timestamps, runtime, provenance |
 | **Acceptance criteria** | All 13 tests pass. Single material failure does not abort benchmark. All 24 metrics from `benchmark_spec.md` present per `BenchmarkRow`. |
 | **Scientific review** | No |
-| **Notes** | Do not import from `cathodescope.tools` directly — go through workflow engine. Status classification per `benchmark_spec.md` Section 5. |
+| **Notes** | BenchmarkRunner(engine, registry, store, workflow_name, workflow_version). Metrics merged from all step data dicts; runner overrides runtime_seconds and workflow_version. classify_benchmark_status() applies benchmark_spec Section 5 thresholds. _classify_exception() maps exceptions to FailureCategory. Exceptions → infrastructure_failure; workflow status independent of BenchmarkRow.status. 13/13 tests pass. ruff + mypy clean. 232/232 total suite passes. Completed 2026-03-12. |
 
 ---
 
@@ -838,7 +838,7 @@
 | T-20 | E-08 | Integration — LiCoO2 Pipeline | M | P0 | 1 | Todo | Yes | **Yes** |
 | T-21 | E-08 | Integration — LiFePO4, LiMn2O4 | S | P0 | 1 | Todo | Yes | No |
 | T-22 | E-09 | Benchmark Registry | XS | P1 | 2 | Done | No | No |
-| T-23 | E-09 | Benchmark Runner | M | P0 | 2 | Todo | Yes | No |
+| T-23 | E-09 | Benchmark Runner | M | P0 | 2 | Done | Yes | No |
 | T-24 | E-09 | Benchmark Integration Test | S | P0 | 2 | Todo | Yes | **Yes** |
 | T-24b | E-09 | Benchmark Regression Comparator | S | P1 | 2 | Todo | No | No |
 | T-25 | E-10 | CLI Interface | S | P2 | 3 | Todo | No | No |
