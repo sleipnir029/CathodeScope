@@ -44,7 +44,8 @@ def _row(
         workflow_name="structural_analysis",
         workflow_version="0.1.0",
         status=status,  # type: ignore[arg-type]
-        metrics=metrics or {
+        metrics=metrics
+        or {
             "lattice_param_deviation_a": 0.5,
             "lattice_param_deviation_b": 0.5,
             "lattice_param_deviation_c": 0.5,

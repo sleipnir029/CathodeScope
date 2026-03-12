@@ -15,9 +15,9 @@ from cathodescope.validation import CheckResult
 # Default thresholds
 # ---------------------------------------------------------------------------
 
-_DEFAULT_FMAX_THRESHOLD: float = 0.05   # eV/Å — lenient post-hoc check
+_DEFAULT_FMAX_THRESHOLD: float = 0.05  # eV/Å — lenient post-hoc check
 _DEFAULT_ENERGY_TOLERANCE: float = 0.1  # eV  — max allowed single-step increase
-_DEFAULT_WARN_PCT: float = 0.9          # fraction of max_steps that triggers warning
+_DEFAULT_WARN_PCT: float = 0.9  # fraction of max_steps that triggers warning
 _DEFAULT_MAX_STEPS: int = 500
 
 
@@ -134,9 +134,7 @@ def check_step_count(
             f"({100 * ratio:.0f}%). Consider increasing max_steps."
         )
     else:
-        message = (
-            f"Step count {steps} is well within the maximum limit of {max_steps}."
-        )
+        message = f"Step count {steps} is well within the maximum limit of {max_steps}."
 
     return CheckResult(
         check_name="step_count",

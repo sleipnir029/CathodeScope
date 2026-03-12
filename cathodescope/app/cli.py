@@ -111,9 +111,7 @@ def _cmd_analyze(args: Any) -> int:
 
     report_path = _save_report(result, args.output_dir)
     if report_path is None:
-        print(
-            "Error: workflow completed but no report was generated.", file=sys.stderr
-        )
+        print("Error: workflow completed but no report was generated.", file=sys.stderr)
         return 1
 
     print(str(report_path))

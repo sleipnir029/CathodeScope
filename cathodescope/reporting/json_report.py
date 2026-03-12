@@ -167,8 +167,7 @@ def _evidence_summary_section(counts: dict[str, int]) -> ReportSection:
     return ReportSection(
         heading="Evidence Summary",
         content_markdown=(
-            f"Overall evidence level: {overall}. "
-            f"Label counts: {counts}."
+            f"Overall evidence level: {overall}. " f"Label counts: {counts}."
         ),
         data={"counts": dict(counts), "overall_level": overall},
         evidence_labels=[],

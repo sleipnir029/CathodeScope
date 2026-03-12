@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Lint with ruff
+        run: ruff check cathodescope/ tests/
+
+      - name: Type check with mypy
+        run: mypy cathodescope/ --ignore-missing-imports
+
+      - name: Run unit tests
+        # Skip integration tests that require real MACE-MP-0 and live MP API.
+        # Integration tests use cached MP fixtures but still need MACE installed.
+        run: pytest tests/ -m "not integration" --cov=cathodescope --cov-report=term-missing -q
+        env:
+          # Pin thread counts for reproducible floating-point results.
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"

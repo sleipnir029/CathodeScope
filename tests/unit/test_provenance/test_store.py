@@ -156,9 +156,7 @@ class TestArtifactStoreWrite:
 class TestArtifactStoreDirectoryStructure:
     """Tests for directory layout and schema compliance."""
 
-    def test_store_directory_structure_matches_schema(
-        self, tmp_path: Path
-    ) -> None:
+    def test_store_directory_structure_matches_schema(self, tmp_path: Path) -> None:
         """Written artifacts land exactly where artifact_schema.md Section 3 says."""
         store = ArtifactStore(root=tmp_path)
 
@@ -196,9 +194,7 @@ class TestArtifactStoreDirectoryStructure:
 class TestArtifactStoreImmutability:
     """Tests for file immutability enforcement."""
 
-    def test_store_files_are_read_only_after_write(
-        self, tmp_path: Path
-    ) -> None:
+    def test_store_files_are_read_only_after_write(self, tmp_path: Path) -> None:
         """Artifact files must have read-only permissions after write."""
         store = ArtifactStore(root=tmp_path)
         store.write_canonical_material("mat-ro", _make_canonical("mat-ro"))
@@ -206,9 +202,7 @@ class TestArtifactStoreImmutability:
         mode = stat.S_IMODE(os.stat(path).st_mode)
         assert mode == 0o444, f"Expected 0o444, got {oct(mode)}"
 
-    def test_store_overwrite_raises_artifact_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_store_overwrite_raises_artifact_error(self, tmp_path: Path) -> None:
         """Writing to an existing non-cache artifact path raises ArtifactError."""
         store = ArtifactStore(root=tmp_path)
         store.write_canonical_material("mat-dup", _make_canonical("mat-dup"))
@@ -219,9 +213,7 @@ class TestArtifactStoreImmutability:
 class TestArtifactStoreProvenance:
     """Tests for provenance convenience copies."""
 
-    def test_store_write_provenance_json_convenience_copy(
-        self, tmp_path: Path
-    ) -> None:
+    def test_store_write_provenance_json_convenience_copy(self, tmp_path: Path) -> None:
         """Writing canonical_material also produces a provenance.json beside it."""
         store = ArtifactStore(root=tmp_path)
         data = _make_canonical("mat-prov")
@@ -235,9 +227,7 @@ class TestArtifactStoreProvenance:
 class TestArtifactStoreIntegrity:
     """Tests for verify_integrity method."""
 
-    def test_store_integrity_check_passes_when_complete(
-        self, tmp_path: Path
-    ) -> None:
+    def test_store_integrity_check_passes_when_complete(self, tmp_path: Path) -> None:
         """verify_integrity returns True when result.json exists for workflow."""
         store = ArtifactStore(root=tmp_path)
         store.write_workflow_result("wf-ok", _make_workflow_result("wf-ok"))

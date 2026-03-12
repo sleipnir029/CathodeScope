@@ -159,9 +159,7 @@ def test_structural_analysis_uses_correct_tool_for_each_step(
     mock_resolve.assert_called_once()
 
     # --- validate → physics_validator.validate ---
-    step_fn_validate = next(
-        s.step_fn for s in definition.steps if s.name == "validate"
-    )
+    step_fn_validate = next(s.step_fn for s in definition.steps if s.name == "validate")
     relax_data = {
         "relaxed_structure": {
             "lattice": {"a": 2.8, "b": 2.8, "c": 14.0},

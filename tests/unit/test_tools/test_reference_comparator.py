@@ -84,8 +84,7 @@ def test_compare_lattice_deviations_a_b_c() -> None:
 
 
 def test_compare_lattice_deviations_angles() -> None:
-    """Angle deviations alpha/beta/gamma are present and zero for identical structures.
-    """
+    """Angle deviations alpha/beta/gamma are zero for identical structures."""
     structure = _orthorhombic()  # alpha=beta=gamma=90°
     result = compare(structure, structure)
 

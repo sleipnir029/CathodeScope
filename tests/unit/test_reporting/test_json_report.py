@@ -150,7 +150,9 @@ def _make_material() -> CanonicalMaterial:
         family="layered_oxide",
         structure={
             "lattice": {
-                "a": 2.81, "b": 2.81, "c": 14.05,
+                "a": 2.81,
+                "b": 2.81,
+                "c": 14.05,
                 "matrix": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
             },
             "sites": [],

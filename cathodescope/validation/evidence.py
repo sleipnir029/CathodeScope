@@ -15,7 +15,7 @@ Implemented in T-13.
 _STEP_EVIDENCE_MAP: dict[str, str] = {
     "fetch_structure": "A-retrieved",
     "normalize": "A-computed",
-    "relax": "A-computed",        # conditional: see assign_evidence_label
+    "relax": "A-computed",  # conditional: see assign_evidence_label
     "compare_reference": "A-compared",
     "validate": "A-compared",
 }

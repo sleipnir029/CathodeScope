@@ -148,7 +148,9 @@ class StepResult(BaseModel):
     )
 
     step_name: str = Field(description="Name of this workflow step.")
-    step_index: int = Field(description="Zero-based index of this step in the workflow.")  # noqa: E501
+    step_index: int = Field(
+        description="Zero-based index of this step in the workflow."
+    )  # noqa: E501
     tool_result: ToolResult = Field(description="ToolResult produced by this step.")
     started_at: datetime = Field(description="UTC timestamp when this step started.")
     completed_at: datetime | None = Field(

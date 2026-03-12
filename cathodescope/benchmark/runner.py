@@ -401,7 +401,7 @@ def classify_benchmark_status(metrics: dict[str, Any]) -> BenchmarkStatus:
         "lattice_param_deviation_c",
     ):
         val = metrics.get(key)
-        if isinstance(val, (int, float)):
+        if isinstance(val, int | float):
             if math.isnan(val):
                 return "hard_failure"
             worst_lat = max(worst_lat, abs(val))
@@ -412,7 +412,7 @@ def classify_benchmark_status(metrics: dict[str, Any]) -> BenchmarkStatus:
     # --- Volume deviation ---
     vol_dev = metrics.get("volume_deviation")
     vol_abs = 0.0
-    if isinstance(vol_dev, (int, float)) and not math.isnan(vol_dev):
+    if isinstance(vol_dev, int | float) and not math.isnan(vol_dev):
         vol_abs = abs(vol_dev)
         if vol_abs >= 20.0:
             return "hard_failure"
@@ -434,7 +434,7 @@ def classify_benchmark_status(metrics: dict[str, Any]) -> BenchmarkStatus:
     )
     for key in angle_keys:
         val = metrics.get(key)
-        if isinstance(val, (int, float)):
+        if isinstance(val, int | float):
             worst_angle = max(worst_angle, abs(val))
 
     if worst_angle >= 3.0:

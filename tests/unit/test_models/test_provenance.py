@@ -17,6 +17,7 @@ from cathodescope.models.provenance import ProvenanceRecord, create_provenance
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _minimal_kwargs() -> dict:
     """Return the minimum required keyword arguments for ProvenanceRecord."""
     return {

@@ -28,5 +28,5 @@ def run_family_specific_checks(
         # EXPAND IN PHASE 4
     """
     _ = structure  # unused in MVP stub
-    _ = family     # unused in MVP stub
+    _ = family  # unused in MVP stub
     return []

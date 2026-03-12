@@ -174,9 +174,7 @@ def test_licoo2_workflow_status_is_success(
 ) -> None:
     """All 7 steps succeed → overall status is 'success'."""
     result, _ = licoo2_run
-    step_info = ", ".join(
-        f"{s.step_name}={s.tool_result.status}" for s in result.steps
-    )
+    step_info = ", ".join(f"{s.step_name}={s.tool_result.status}" for s in result.steps)
     assert result.status == "success", f"Pipeline failed. Steps: {step_info}"
 
 
@@ -518,9 +516,9 @@ def test_lifepo4_lattice_deviations_below_threshold(
             "for Pnma polyanion structures."
         )
     vol_dev: float = compare_data["volume_deviation"]
-    assert vol_dev < 20.0, (
-        f"LiFePO4 volume deviation {vol_dev:.3f}% exceeds 20% Hard Failure threshold."
-    )
+    assert (
+        vol_dev < 20.0
+    ), f"LiFePO4 volume deviation {vol_dev:.3f}% exceeds 20% Hard Failure threshold."
 
 
 @pytest.mark.integration
@@ -586,9 +584,7 @@ def test_limn2o4_completes_without_hard_failure(
     complete. A run that completes all 7 steps is not a Hard Failure.
     """
     result, _ = limn2o4_run
-    step_info = ", ".join(
-        f"{s.step_name}={s.tool_result.status}" for s in result.steps
-    )
+    step_info = ", ".join(f"{s.step_name}={s.tool_result.status}" for s in result.steps)
     assert len(result.steps) == 7, (
         f"Expected 7 pipeline steps, got {len(result.steps)}. "
         f"Steps present: {step_info}. "

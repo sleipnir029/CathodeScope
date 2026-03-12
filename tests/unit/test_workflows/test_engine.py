@@ -209,8 +209,8 @@ def test_engine_passes_context_between_steps() -> None:
     engine, registry = _engine_and_registry()
     registry.register(_defn("ctx_wf", [_spec("first", first), _spec("second", second)]))
     engine.run("ctx_wf", {}, {})
-    assert snapshots[0] == set()          # first step: empty context
-    assert "first" in snapshots[1]        # second step: sees 'first' result
+    assert snapshots[0] == set()  # first step: empty context
+    assert "first" in snapshots[1]  # second step: sees 'first' result
 
 
 def test_engine_returns_workflow_result() -> None:

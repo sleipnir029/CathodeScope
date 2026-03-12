@@ -266,9 +266,9 @@ def test_markdown_no_disallowed_words() -> None:
         r"\baccurate\b(?! lattice parameters within| to| at)",
     ]
     for pattern in disallowed_patterns:
-        assert not re.search(pattern, md, re.IGNORECASE), (
-            f"Disallowed wording pattern found in output: {pattern!r}"
-        )
+        assert not re.search(
+            pattern, md, re.IGNORECASE
+        ), f"Disallowed wording pattern found in output: {pattern!r}"
 
 
 def test_markdown_matches_validity_matrix_format() -> None:

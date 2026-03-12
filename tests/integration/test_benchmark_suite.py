@@ -282,13 +282,13 @@ def test_benchmark_rows_stored(
 ) -> None:
     """Benchmark runner writes one row file per material and a summary file."""
     _, bench_id, store = benchmark_run
-    assert store.exists(f"benchmarks/{bench_id}/summary.json"), (
-        "Benchmark summary file missing from ArtifactStore."
-    )
+    assert store.exists(
+        f"benchmarks/{bench_id}/summary.json"
+    ), "Benchmark summary file missing from ArtifactStore."
     for mp_id in _PHASE1_MP_IDS:
-        assert store.exists(f"benchmarks/{bench_id}/rows/{mp_id}.json"), (
-            f"Row file missing for material {mp_id}."
-        )
+        assert store.exists(
+            f"benchmarks/{bench_id}/rows/{mp_id}.json"
+        ), f"Row file missing for material {mp_id}."
 
 
 @pytest.mark.integration

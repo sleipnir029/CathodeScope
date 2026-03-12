@@ -111,9 +111,7 @@ class RegressionReport(BaseModel):
     )
     new_successes: list[str] = Field(
         default_factory=list,
-        description=(
-            "Material IDs that were failing in run A but passing in run B."
-        ),
+        description=("Material IDs that were failing in run A but passing in run B."),
     )
     metric_deltas: dict[str, dict[str, Any]] = Field(
         default_factory=dict,
@@ -238,9 +236,9 @@ def _numeric_deltas(
         val_b = metrics_b.get(key)
         # Exclude bool (subtype of int) and non-numeric types.
         if (
-            isinstance(val_a, (int, float))
+            isinstance(val_a, int | float)
             and not isinstance(val_a, bool)
-            and isinstance(val_b, (int, float))
+            and isinstance(val_b, int | float)
             and not isinstance(val_b, bool)
         ):
             deltas[key] = float(val_b) - float(val_a)

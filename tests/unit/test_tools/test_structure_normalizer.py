@@ -119,7 +119,12 @@ def test_normalize_data_has_required_fields() -> None:
     result = normalize(structure_dict, mp_id="mp-22526", formula="LiCoO2")
     assert result.data is not None
     required_keys = (
-        "mp_id", "formula", "space_group", "space_group_number", "n_atoms", "structure"
+        "mp_id",
+        "formula",
+        "space_group",
+        "space_group_number",
+        "n_atoms",
+        "structure",
     )
     for key in required_keys:
         assert key in result.data, f"Missing required key: {key!r}"

@@ -167,9 +167,9 @@ def test_structural_checks_return_check_result_list() -> None:
     assert isinstance(results, list)
     assert len(results) >= 1
     for result in results:
-        assert _CHECK_KEYS.issubset(result.keys()), (
-            f"Missing keys in check result: {_CHECK_KEYS - result.keys()}"
-        )
+        assert _CHECK_KEYS.issubset(
+            result.keys()
+        ), f"Missing keys in check result: {_CHECK_KEYS - result.keys()}"
         assert isinstance(result["check_name"], str)
         assert isinstance(result["category"], str)
         assert isinstance(result["passed"], bool)

@@ -19,7 +19,7 @@ from cathodescope.validation import CheckResult
 
 _DEFAULT_MIN_BOND: float = 1.0  # Å — matches config.defaults.DEFAULT_MIN_BOND
 _DEFAULT_MAX_BOND: float = 4.0  # Å — matches config.defaults.DEFAULT_MAX_BOND
-_DEFAULT_OVERLAP: float = 0.5   # Å — strict atom-overlap threshold
+_DEFAULT_OVERLAP: float = 0.5  # Å — strict atom-overlap threshold
 
 
 def _parse_structure(structure: dict[str, Any]) -> Structure:

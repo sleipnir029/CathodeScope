@@ -156,9 +156,9 @@ def relax(
     # --- Setup ---------------------------------------------------------------
     atoms = AseAtomsAdaptor.get_atoms(structure)
     atoms.calc = calculator
-    initial_volume = atoms.get_volume()  # type: ignore[no-untyped-call]
+    initial_volume = atoms.get_volume()
 
-    optim_target: Any = FrechetCellFilter(atoms) if relax_cell else atoms  # type: ignore[no-untyped-call]
+    optim_target: Any = FrechetCellFilter(atoms) if relax_cell else atoms
     optimizer = FIRE(optim_target, logfile=None)
 
     energy_history: list[float] = []
@@ -183,7 +183,7 @@ def relax(
                     relax_cell,
                 )
 
-            e = float(atoms.get_potential_energy())  # type: ignore[no-untyped-call]
+            e = float(atoms.get_potential_energy())
             fmax_val = float(np.sqrt((f**2).sum(axis=1).max()))
 
             # Divergence: energy climbed far above the initial value.
@@ -218,7 +218,7 @@ def relax(
     # --- Post-run validation -------------------------------------------------
 
     # Volume change check.
-    final_volume = atoms.get_volume()  # type: ignore[no-untyped-call]
+    final_volume = atoms.get_volume()
     volume_change_pct = abs(final_volume - initial_volume) / initial_volume * 100.0
     if volume_change_pct > _max_volume_change_pct:
         return _failure_result(

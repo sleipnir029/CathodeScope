@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-25 Done; 28/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-26 Done; 29/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -718,14 +718,15 @@
 | **Why it exists** | Automated quality gates prevent regressions and enforce code standards. |
 | **Dependencies** | T-00 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P2 |
 | **Phase** | 4 |
 | **Files affected** | `.pre-commit-config.yaml` (exists — verify/update), `.github/workflows/ci.yml` (create) |
 | **Tests required** | N/A (infrastructure task) |
 | **Acceptance criteria** | `pre-commit run --all-files` passes. CI workflow is valid YAML. |
 | **Scientific review** | No |
-| **Notes** | **Scope correction (2026-03-12 review)**: `.pre-commit-config.yaml` already exists (ruff + mypy hooks). Task is now: verify it runs cleanly, update hooks if needed, and create `.github/workflows/ci.yml`. Skip MACE integration tests in CI (`-m "not integration"`). CI uses cached MP fixtures. |
+| **Completed** | 2026-03-12 |
+| **Notes** | **Scope correction (2026-03-12 review)**: `.pre-commit-config.yaml` already exists (ruff + mypy hooks). Task is now: verify it runs cleanly, update hooks if needed, and create `.github/workflows/ci.yml`. Skip MACE integration tests in CI (`-m "not integration"`). CI uses cached MP fixtures. Updated mypy pre-commit hook to `pass_filenames: false, args: [--ignore-missing-imports, cathodescope/]` so mypy runs only on production code (matching CI). Removed 5 stale `# type: ignore` comments in `structure_relaxer.py` and `mp_client.py`. Fixed ruff UP038 (`int | float` instead of `(int, float)`) in `benchmark/comparator.py` and `benchmark/runner.py`. |
 
 ---
 
@@ -852,8 +853,8 @@
 | T-23 | E-09 | Benchmark Runner | M | P0 | 2 | Done | Yes | No |
 | T-24 | E-09 | Benchmark Integration Test | S | P0 | 2 | Done | Yes | **Yes** |
 | T-24b | E-09 | Benchmark Regression Comparator | S | P1 | 2 | Done | No | No |
-| T-25 | E-10 | CLI Interface | S | P2 | 3 | Todo | No | No |
-| T-26 | E-10 | Pre-commit and CI | S | P2 | 4 | Todo | No | No |
+| T-25 | E-10 | CLI Interface | S | P2 | 3 | Done | No | No |
+| T-26 | E-10 | Pre-commit and CI | S | P2 | 4 | Done | No | No |
 | T-27 | E-10 | Import Rule Enforcement | S | P2 | 4 | Todo | No | No |
 | T-28 | E-10 | Golden Output Generation | S | P2 | 4 | Todo | No | No |
 | T-29 | E-10 | Regression Tests | S | P2 | 4 | Todo | No | No |

@@ -12,4 +12,8 @@ repos:
       - id: mypy
         additional_dependencies:
           - pydantic>=2.0
-        args: [--ignore-missing-imports]
+        # Run mypy only on the production package, matching CI behaviour.
+        # Test files are excluded: integration tests use real MACE/ASE objects
+        # that are untyped, and unit tests use untyped pytest decorators.
+        pass_filenames: false
+        args: [--ignore-missing-imports, cathodescope/]

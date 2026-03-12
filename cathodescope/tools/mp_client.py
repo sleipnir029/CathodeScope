@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from mp_api.client import MPRester  # type: ignore[import-untyped]
+from mp_api.client import MPRester
 
 from cathodescope.models.provenance import create_provenance
 from cathodescope.models.results import ErrorRecord, ToolResult
@@ -127,9 +127,7 @@ class CathodescopeMPClient:
 
         try:
             with MPRester(self._api_key) as mpr:
-                docs = mpr.materials.summary.search(
-                    formula=formula, fields=_FIELDS
-                )
+                docs = mpr.materials.summary.search(formula=formula, fields=_FIELDS)
         except TimeoutError as exc:
             return self._failure_result("NetworkError", str(exc))
         except Exception as exc:  # noqa: BLE001
