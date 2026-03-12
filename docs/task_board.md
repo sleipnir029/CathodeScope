@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-14 Done; 20/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-15 Done; 21/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -432,14 +432,15 @@
 | **Why it exists** | The JSON report is the primary machine-readable artifact. Markdown is derived from it. |
 | **Dependencies** | T-04, T-02 |
 | **Size** | M |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 1 |
+| **Completed** | 2026-03-12 |
 | **Files affected** | `cathodescope/reporting/json_report.py`, `tests/unit/test_reporting/test_json_report.py` |
 | **Tests required** | 12 tests: return type, required sections (material summary, retrieved data, normalization, relaxation, comparison, validation, evidence summary, provenance), evidence counts, serialization |
 | **Acceptance criteria** | All 12 tests pass. Sections follow order defined in `architecture.md` Section 4.7. |
 | **Scientific review** | No |
-| **Notes** | Do not import from `cathodescope.tools`. Report builder operates on model objects, not tool internals. |
+| **Notes** | `build_json_report(workflow_result, material) -> ReportRecord`. 8 sections in architecture.md order. Material Summary built from CanonicalMaterial fields; steps 2–6 pulled from step_map by name; Evidence Summary aggregates evidence_type counts (excluding "metadata"); Provenance Summary from workflow_result.provenance. raw_user_input extracted from resolve_input step data["raw_input"] or falls back to material.formula. No cathodescope.tools imports. 12/12 tests pass; ruff + mypy clean; 291/291 total suite passes. |
 
 ---
 
@@ -833,7 +834,7 @@
 | T-12 | E-05 | Validation Layer | M | P1 | 1 | Done | No | No |
 | T-13 | E-05 | Evidence Label Assigner | S | P1 | 1 | Done | No | **Yes** |
 | T-14 | E-05 | Physics Validator Tool | S | P1 | 1 | Todo | No | No |
-| T-15 | E-07 | JSON Report Builder | M | P1 | 1 | Todo | No | No |
+| T-15 | E-07 | JSON Report Builder | M | P1 | 1 | Done | No | No |
 | T-16 | E-07 | Markdown Report Renderer | M | P1 | 1 | Todo | No | **Yes** |
 | T-17 | E-07 | Report Generator Tool | XS | P1 | 1 | Todo | No | No |
 | T-18 | E-08 | Workflow Engine | M | P0 | 1 | Done | Yes | No |
