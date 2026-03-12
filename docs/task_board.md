@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-29 Done; 32/32 non-agent tasks complete; T-30 Todo)
+**Last Updated**: 2026-03-12 (T-30 Done; all 33 tasks complete; Phase 4 complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -814,14 +814,15 @@
 | **Why it exists** | The `agent/` directory must have correct interfaces so Phase 5 starts cleanly. |
 | **Dependencies** | T-18 |
 | **Size** | XS |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P3 |
 | **Phase** | 4 |
-| **Files affected** | `cathodescope/agent/__init__.py` |
+| **Completed** | 2026-03-12 |
+| **Files affected** | `cathodescope/agent/__init__.py`, `tests/unit/test_agent/test_agent_scaffolding.py` |
 | **Tests required** | 2 tests: module importable, directory contains only `__init__.py` |
 | **Acceptance criteria** | All 2 tests pass. No actual agent functionality. |
 | **Scientific review** | No |
-| **Notes** | Do not implement any agent functionality. Do not add dependency on `cathodescope.tools`. |
+| **Notes** | `cathodescope/agent/__init__.py` created with docstring, `__all__: list[str] = []`, and no imports from `cathodescope.tools`. `test_all_subpackages_importable` updated to include `cathodescope.agent`. 334/334 tests pass; ruff + mypy clean. |
 
 ---
 
@@ -858,10 +859,10 @@
 | T-24b | E-09 | Benchmark Regression Comparator | S | P1 | 2 | Done | No | No |
 | T-25 | E-10 | CLI Interface | S | P2 | 3 | Done | No | No |
 | T-26 | E-10 | Pre-commit and CI | S | P2 | 4 | Done | No | No |
-| T-27 | E-10 | Import Rule Enforcement | S | P2 | 4 | Todo | No | No |
-| T-28 | E-10 | Golden Output Generation | S | P2 | 4 | Todo | No | No |
-| T-29 | E-10 | Regression Tests | S | P2 | 4 | Todo | No | No |
-| T-30 | E-10 | Agent Scaffolding | XS | P3 | 4 | Todo | No | No |
+| T-27 | E-10 | Import Rule Enforcement | S | P2 | 4 | Done | No | No |
+| T-28 | E-10 | Golden Output Generation | S | P2 | 4 | Done | No | No |
+| T-29 | E-10 | Regression Tests | S | P2 | 4 | Done | No | No |
+| T-30 | E-10 | Agent Scaffolding | XS | P3 | 4 | Done | No | No |
 
 **Total**: 32 tasks | 13 on critical path | 5 require scientific review
 

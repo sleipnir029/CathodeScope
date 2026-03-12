@@ -79,6 +79,7 @@ def test_package_importable() -> None:
 
 def test_all_subpackages_importable() -> None:
     """Every cathodescope subpackage imports without error."""
+    import cathodescope.agent  # noqa: F401
     import cathodescope.app  # noqa: F401
     import cathodescope.benchmark  # noqa: F401
     import cathodescope.config  # noqa: F401
