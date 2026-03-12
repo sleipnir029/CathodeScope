@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-23 Done; 16/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-24b Done; 17/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -655,14 +655,14 @@
 | **Why it exists** | Without regression comparison, code changes that degrade benchmark performance go undetected. Required for Phase 2 gate. |
 | **Dependencies** | T-23, T-04 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P1 |
 | **Phase** | 2 |
 | **Files affected** | `cathodescope/benchmark/comparator.py`, `tests/unit/test_benchmark/test_comparator.py` |
 | **Tests required** | 6 tests: status change detection, metric deltas, new failures, new successes, regression report format, missing material handling |
 | **Acceptance criteria** | All 6 tests pass. Status changes between runs detected and reported. |
 | **Scientific review** | No |
-| **Notes** | Expose via CLI: `cathodescope benchmark compare <path_a> <path_b>`. |
+| **Notes** | compare_benchmarks(rows_a, rows_b) takes list[BenchmarkRow] (not BenchmarkSummary) for filesystem-free unit testing; CLI wrapper would load rows from summary paths. RegressionReport (Pydantic) + StatusChange in comparator.py. Status severity: success=0, partial_success=1, soft_failure=2, hard_failure=3, infrastructure_failure=4. new_failures = was passing→now failing; new_successes = was failing→now passing. Numeric metric deltas: float(b)−float(a); bools excluded. 7/7 tests pass (6 spec + 1 extra edge case). ruff + mypy clean. 239/239 total suite passes. Completed 2026-03-12. |
 
 ---
 
@@ -840,7 +840,7 @@
 | T-22 | E-09 | Benchmark Registry | XS | P1 | 2 | Done | No | No |
 | T-23 | E-09 | Benchmark Runner | M | P0 | 2 | Done | Yes | No |
 | T-24 | E-09 | Benchmark Integration Test | S | P0 | 2 | Todo | Yes | **Yes** |
-| T-24b | E-09 | Benchmark Regression Comparator | S | P1 | 2 | Todo | No | No |
+| T-24b | E-09 | Benchmark Regression Comparator | S | P1 | 2 | Done | No | No |
 | T-25 | E-10 | CLI Interface | S | P2 | 3 | Todo | No | No |
 | T-26 | E-10 | Pre-commit and CI | S | P2 | 4 | Todo | No | No |
 | T-27 | E-10 | Import Rule Enforcement | S | P2 | 4 | Todo | No | No |
