@@ -1,7 +1,7 @@
 # CathodeScope — Task Board
 
 **Version**: 1.0.0
-**Last Updated**: 2026-03-12 (T-17 Done; 23/32 tasks complete)
+**Last Updated**: 2026-03-12 (T-19 Done; 24/32 tasks complete)
 **Status**: Active — Project Management Document
 **Cross-References**: `planning/tdd_task_breakdown.md` (authoritative source), `epic_board.md` (epic groupings), `task_sequence_summary.md` (execution order), `task_execution_rules.md` (how to work tasks)
 
@@ -524,14 +524,15 @@
 | **Why it exists** | The only MVP workflow. Defines the step sequence for the single-material pipeline. |
 | **Dependencies** | T-18, all tools T-07 through T-17 |
 | **Size** | S |
-| **Status** | Todo |
+| **Status** | Done |
 | **Priority** | P0 |
 | **Phase** | 1 |
 | **Files affected** | `cathodescope/workflows/structural_analysis.py`, `tests/unit/test_workflows/test_structural_analysis.py` |
 | **Tests required** | 7 tests: registry registration, step count, step order, step names, version, tool binding, context passing |
 | **Acceptance criteria** | All 7 tests pass. Step names match `architecture.md` Section 4.3 and `artifact_schema.md` step file naming. |
 | **Scientific review** | No |
-| **Notes** | Each step is a thin wrapper extracting data from context and calling the corresponding tool. |
+| **Completed** | 2026-03-12 |
+| **Notes** | REGISTRY + DEFINITION at module level. 7 step fns (_step_resolve_input … _step_generate_report); lazy tool imports inside each fn. mp_client + calculator injected via config or instantiated on demand. CanonicalMaterial created in _step_normalize; stored in context.material. _build_partial_workflow_result used by generate_report step. 7/7 tests pass; ruff + mypy clean; 318/318 total suite passes. |
 
 ---
 
