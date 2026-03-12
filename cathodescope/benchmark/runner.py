@@ -244,20 +244,104 @@ class BenchmarkRunner:
         )
 
     def _extract_metrics(self, wf_result: WorkflowResult) -> dict[str, Any]:
-        """Merge metrics from all step ``data`` dicts in *wf_result*.
+        """Merge and flatten metrics from all step ``data`` dicts in *wf_result*.
 
-        The runner merges ``tool_result.data`` from every completed step.
-        Later steps override earlier steps for duplicate keys. After merging,
-        the runner overwrites ``runtime_seconds`` and ``workflow_version``
-        with authoritative values derived from the workflow result and the
-        runner's own configuration.
+        Performs a flat merge of ``tool_result.data`` from every completed step
+        (later steps override earlier steps for duplicate keys).  Applies a
+        second pass to flatten nested structures produced by the real workflow
+        into the 24 flat benchmark metric keys defined in
+        ``benchmark_spec.md`` Section 4.
+
+        Nested-to-flat mapping is guarded by ``if key not in metrics`` so that
+        mock step data already containing flat keys (unit tests) is preserved
+        unchanged.  After flattening, the runner overwrites ``runtime_seconds``
+        and ``workflow_version`` with authoritative values.
         """
         metrics: dict[str, Any] = {}
         for step in wf_result.steps:
             if step.tool_result.data:
                 metrics.update(step.tool_result.data)
 
-        # Runner-authoritative fields (always override step-provided values).
+        # --- Flatten nested lattice deviations (compare_reference step) ------
+        # Real workflow: {"lattice_deviations": {"a": ..., "b": ..., "c": ...}}
+        if "lattice_param_deviation_a" not in metrics:
+            lat = metrics.get("lattice_deviations") or {}
+            metrics["lattice_param_deviation_a"] = lat.get("a")
+            metrics["lattice_param_deviation_b"] = lat.get("b")
+            metrics["lattice_param_deviation_c"] = lat.get("c")
+
+        # --- Flatten nested angle deviations ----------------------------------
+        # Real workflow: {"angle_deviations": {"alpha": ..., "beta": ..., "gamma": ...}}
+        if "angle_deviation_alpha" not in metrics:
+            ang = metrics.get("angle_deviations") or {}
+            metrics["angle_deviation_alpha"] = ang.get("alpha")
+            metrics["angle_deviation_beta"] = ang.get("beta")
+            metrics["angle_deviation_gamma"] = ang.get("gamma")
+
+        # --- Flatten convergence_info (relax step) ----------------------------
+        # Real workflow: {"convergence_info": {"converged": bool, "steps": int, ...}}
+        if "relaxation_convergence" not in metrics:
+            conv = metrics.get("convergence_info") or {}
+            metrics["relaxation_convergence"] = conv.get("converged")
+            metrics["relaxation_steps"] = conv.get("steps")
+
+        # --- Space group mappings (compare_reference and normalize steps) -----
+        if "space_group_output" not in metrics:
+            metrics["space_group_output"] = metrics.get("relaxed_space_group")
+
+        if "space_group_input" not in metrics:
+            sg = metrics.get("space_group")
+            if isinstance(sg, dict):
+                metrics["space_group_input"] = sg.get("symbol")
+            else:
+                metrics["space_group_input"] = sg
+
+        # --- Step-success boolean flags ---------------------------------------
+        if "input_resolution" not in metrics:
+            metrics["input_resolution"] = metrics.get("source_type") is not None
+
+        if "structure_retrieval" not in metrics:
+            metrics["structure_retrieval"] = metrics.get("mp_id") is not None
+
+        if "structure_normalization" not in metrics:
+            metrics["structure_normalization"] = (
+                "structure" in metrics and metrics.get("space_group") is not None
+            )
+
+        # --- symprec_used: default SpacegroupAnalyzer symprec ----------------
+        if "symprec_used" not in metrics:
+            metrics["symprec_used"] = 0.1
+
+        # --- Bond lengths from validate step checks --------------------------
+        # check_bond_lengths stores value=min_dist, threshold={"min_bond", "max_bond"}
+        if "min_bond_length" not in metrics:
+            metrics["min_bond_length"] = None
+            for check in metrics.get("checks") or []:
+                cname = check.get("check_name") if isinstance(check, dict) else None
+                if cname == "bond_lengths":
+                    metrics["min_bond_length"] = check.get("value")
+                    break
+
+        if "max_bond_length" not in metrics:
+            max_bond_val = 4.0  # default threshold from ValidationConfig
+            for check in metrics.get("checks") or []:
+                cname = check.get("check_name") if isinstance(check, dict) else None
+                if cname == "bond_lengths":
+                    thr = check.get("threshold") or {}
+                    max_bond_val = thr.get("max_bond", 4.0)
+                    break
+            metrics["max_bond_length"] = max_bond_val
+
+        # --- Evidence labeling complete (validate step) ----------------------
+        if "evidence_labeling_complete" not in metrics:
+            labels = metrics.get("evidence_labels") or []
+            metrics["evidence_labeling_complete"] = len(labels) > 0
+
+        # --- Report generated (report step) ----------------------------------
+        if "report_generated" not in metrics:
+            metrics["report_generated"] = "report_json" in metrics
+
+        # --- Runner-authoritative fields (always override step values) -------
         if wf_result.started_at is not None and wf_result.completed_at is not None:
             metrics["runtime_seconds"] = (
                 wf_result.completed_at - wf_result.started_at

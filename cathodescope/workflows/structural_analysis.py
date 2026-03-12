@@ -178,11 +178,19 @@ def _step_resolve_input(context: WorkflowContext) -> ToolResult:
 
     Reads ``context.material`` as the raw string and delegates to
     :func:`~cathodescope.tools.input_resolver.resolve`.
+
+    Also accepts a dict material (e.g. from the benchmark runner registry)
+    with ``mp_id`` and/or ``formula`` keys; extracts the mp_id preferentially.
     """
     from cathodescope.tools import input_resolver
 
     mp_client = _get_mp_client(context)
-    return input_resolver.resolve(str(context.material), mp_client)
+    material = context.material
+    if isinstance(material, dict):
+        raw: str = material.get("mp_id") or material.get("formula", "")
+    else:
+        raw = str(material)
+    return input_resolver.resolve(raw, mp_client)
 
 
 def _step_fetch_structure(context: WorkflowContext) -> ToolResult:
